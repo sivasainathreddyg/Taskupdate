@@ -1,0 +1,92 @@
+/* Enter your custom styles here */
+.subTittletextClass {
+    font-weight: bold;
+    position: relative;
+    top: 220px;
+    left: -100px;
+    font-size: 15px;
+    color: aliceblue;
+}
+.hboxClassId {
+    position: relative;
+    top: 10px;
+    left: 650px;
+}
+.classLabel.sapMLabel {
+    color: #101010;
+    font-size: .875rem;
+    font-family: "72", "72full", Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    display: inline-block;
+    white-space: nowrap;
+    cursor: text;
+    overflow: hidden;
+    box-sizing: border-box;
+
+}
+
+/* Enter your custom styles here */
+
+
+div#container-demotime---View1--SplitContainer-Master {
+    width: 75%;
+}
+
+span.sapMSinglePCRowHeaderAMPM {
+    visibility: hidden;
+}
+
+/* Rotate the entire calendar */
+/* .sapMSinglePCGridContent {
+    transform: rotate(180deg);
+} */
+
+/* .sapMSinglePCRowHeaders {
+    transform: rotate(180deg);
+} */
+
+/* .sapMSinglePCNowMarker {
+    display: none !important;
+} */
+
+.legendSquare {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin-right: 8px;
+    border-radius: 2px;
+}
+
+.legendBlue {
+    background-color: #007aff;
+    /* blue */
+}
+
+.legendOrange {
+    background-color: #ff7f00;
+    /* orange */
+}
+
+.legendGreen {
+    background-color: #0f9d58;
+    /* green */
+}
+
+.legendRed {
+    background-color: #d93025;
+    /* red */
+}
+
+/* .dailyHourCell {
+    width: 50px;
+    height: 30px;
+    text-align: center !important;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f3f3f3;
+    font-weight: bold;
+    margin-left: 30px;
+    margin-bottom: 20px;
+  } */
+  

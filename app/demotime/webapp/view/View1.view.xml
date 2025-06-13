@@ -1,0 +1,190 @@
+<!-- <mvc:View controllerName="demotime.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+    <Button text="newpage"></Button>
+    </Page>
+</mvc:View>  -->
+
+<mvc:View
+    controllerName="demotime.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:unified="sap.ui.unified"
+    xmlns:single="sap.m"
+    xmlns:dnd="sap.ui.core.dnd"
+>
+    <SplitContainer
+        id="SplitContainer"
+        mode="StretchCompressMode"
+    >
+        <!-- Left Pane: Calendar -->
+        <masterPages>
+            <Page title="My Timesheet">
+                <VBox id="calendarVBox">
+                    <dragDropConfig>
+                        <dnd:DropInfo
+                            groupName="Tasks"
+                            drop="handleTaskDropOnCalendar"
+                        />
+                    </dragDropConfig>
+                    <SinglePlanningCalendar
+                        id="SPC1"
+                        title="Timesheet Calendar"
+                        startDate="{calendermodel>/startDate}"
+                        startHour="0"
+                        endHour="24"
+                        
+                        viewChange="handleViewChange"
+                        appointmentSelect="handleAppointmentSelect"
+                        headerDateSelect="handleHeaderDateSelect"
+                        startDateChange="handleStartDateChange"
+                        appointmentDrop="handleAppointmentDrop"
+                        appointmentResize="handleAppointmentResize"
+                        appointmentCreate="handleAppointmentCreate"
+                        enableAppointmentsDragAndDrop="true"
+                        enableAppointmentsResize="true"
+                        enableAppointmentsCreate="true"
+                        stickyMode="All"
+                        appointments="{calendermodel>/appointments}"
+                    >
+                        <!-- <dragDropConfig>
+                            <dnd:DropInfo
+                                groupName="Tasks"
+                                targetAggregation="appointments"
+                                drop="handleTaskDropOnCalendar"
+                            />
+                        </dragDropConfig> -->
+                        
+                        <actions>
+                            <!-- <Button
+                                id="btnCreate"
+                                text="Create"
+                                press="onAddNewTask"
+                            /> -->
+                            <Text text="{calendermodel>/email}" ></Text>
+                            <Button
+                                id="btnLegend"
+                                icon="sap-icon://legend"
+                                press="onOpenLegend"
+                                tooltip="Legend"
+                            />
+                        </actions>
+
+                        <views>
+                            <SinglePlanningCalendarWeekView
+                                key="Week"
+                                title="Week"
+                            />
+                        </views>
+                        <!-- <views>
+                            <SinglePlanningCalendarMonthView
+                                key="MonthView"
+                                title="Month"
+                            />
+                        </views> -->
+
+                        <appointments>
+                            <unified:CalendarAppointment
+                                title="{calendermodel>title}"
+                                text="{calendermodel>taskDescription}"
+                                type="{calendermodel>type}"
+                                startDate="{calendermodel>startDate}"
+                                endDate="{calendermodel>endDate}"
+                            />
+                        </appointments>
+                    </SinglePlanningCalendar>
+                    <HBox
+                        id="dailyTotalRow"
+                        justifyContent="SpaceAround"
+                        class="sapUiSmallMarginTop"
+                    >
+                        <Text
+                            id="monHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="tueHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="wedHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="thuHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="friHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="satHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                        <Text
+                            id="sunHours"
+                            text="0"
+                            class="dailyHourCell"
+                        />
+                    </HBox>
+                </VBox>
+            </Page>
+        </masterPages>
+
+        <!-- Right Pane: Task List -->
+        <detailPages>
+            <Page title="My Tasks">
+                <VBox>
+                    <!-- <Title
+                        text="Task List"
+                        level="H3"
+                    /> -->
+
+                    <SearchField
+                        id="taskSearchField"
+                        placeholder="Search by task title..."
+                        liveChange="onTaskSearch"
+                        width="100%"
+                    />
+
+                    <List
+                        id="TaskList"
+                        items="{
+                        path: 'taskmodel>/tasks',
+                        filters: []
+                        }"
+                    >
+                        <dragDropConfig>
+                            <dnd:DragInfo
+                                sourceAggregation="items"
+                                groupName="Tasks"
+                                dragStart="onTaskDragStart"
+                            />
+                        </dragDropConfig>
+                        <ObjectListItem
+                            title="{taskmodel>taskTitle}"
+                            number="{taskmodel>hours} Hours"
+                            type="Active"
+                            press="onTaskPress"
+                        >
+                            <ObjectAttribute
+                                text="{taskmodel>taskDescription}"
+                            />
+                        </ObjectListItem>
+                    </List>
+                </VBox>
+            </Page>
+        </detailPages>
+    </SplitContainer>
+</mvc:View>
+
+

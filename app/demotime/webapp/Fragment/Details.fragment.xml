@@ -1,0 +1,105 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <ResponsivePopover
+        placement="Auto"
+        showHeader="true"
+        showArrow="true"
+        contentWidth="300px"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="Task Details" />
+                </contentLeft>
+                <!-- <contentRight>
+                    <Button
+                        text="Approve"
+                        press="handleApproveButton"
+                        type="Accept"
+                    />
+                </contentRight> -->
+            </Bar>
+        </customHeader>
+
+        <beginButton>
+            <Button
+                text="{=${view>/editMode} ? 'Save':'Edit'}"
+                type="Emphasized"
+                press="handleEditSaveButton"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Reject"
+                press="handlePopoverDeleteButton"
+                type="Negative"
+            />
+        </endButton>
+
+        <VBox class="sapUiSmallMargin">
+            <!-- TITLE -->
+            <Text text="Title:" />
+            <Text
+                text="{calendermodel>title}"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <Input
+                id="idTitle"
+                value="{calendermodel>title}"
+                visible="{= ${view>/editMode} }"
+            />
+
+            <!-- DESCRIPTION -->
+            <Text text="Task Description:" />
+            <Text
+                text="{calendermodel>taskDescription}"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <Input
+                id="idtaskDescription"
+                value="{calendermodel>taskDescription}"
+                visible="{= ${view>/editMode} }"
+            />
+
+            <!-- START DATE & TIME -->
+            <Text text="Start Date" />
+            <Text
+                text="{ path: 'calendermodel>startDate', type: 'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', pattern: 'dd MMM yyyy HH:mm' } }"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <DateTimePicker
+                id="startDateTimePicker"
+                value="{calendermodel>startDate}"
+                displayFormat="dd MMM yyyy HH:mm"
+                valueFormat="yyyy-MM-dd'T'HH:mm:ss"
+                visible="{= ${view>/editMode} }"
+            />
+
+            <!-- END DATE & TIME -->
+            <Text text="End Date" />
+            <Text
+                text="{ path: 'calendermodel>endDate', type: 'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', pattern: 'dd MMM yyyy HH:mm' } }"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <DateTimePicker
+                id="endDateTimePicker"
+                value="{calendermodel>endDate}"
+                displayFormat="dd MMM yyyy HH:mm"
+                valueFormat="yyyy-MM-dd'T'HH:mm:ss"
+                visible="{= ${view>/editMode} }"
+            />
+
+            <Text text="Total Hours:" />
+            <Text
+                text="{path: 'calculated>/totalHours'}"
+                class="sapUiSmallMarginBottom"
+            />
+        </VBox>
+    </ResponsivePopover>
+</core:FragmentDefinition>
