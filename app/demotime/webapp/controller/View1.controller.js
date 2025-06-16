@@ -413,6 +413,8 @@ sap.ui.define([
 
 
                     oCalendarModel.setProperty("/appointments", aAppointments);
+                    oCalendarModel.setSizeLimit(aAppointments.length);
+                    this.getView().getModel("calendermodel").refresh(true);
                     // this.calculateDailyTotalsFromAppointments();
                     this.handleStartDateChange();
                 }.bind(this),
