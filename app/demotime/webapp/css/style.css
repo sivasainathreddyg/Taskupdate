@@ -7,11 +7,13 @@
     font-size: 15px;
     color: aliceblue;
 }
+
 .hboxClassId {
     position: relative;
     top: 10px;
     left: 650px;
 }
+
 .classLabel.sapMLabel {
     color: #101010;
     font-size: .875rem;
@@ -89,4 +91,7 @@ span.sapMSinglePCRowHeaderAMPM {
     margin-left: 30px;
     margin-bottom: 20px;
   } */
-  
+
+.adminWidthClass {
+    width: 100% !important;
+}

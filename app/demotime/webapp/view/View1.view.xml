@@ -142,7 +142,7 @@
 
         <!-- Right Pane: Task List -->
         <detailPages>
-            <Page title="My Tasks">
+            <Page title="My Tasks" id="idDetailPage">
                 <VBox>
                     <!-- <Title
                         text="Task List"

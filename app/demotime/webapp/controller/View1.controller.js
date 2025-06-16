@@ -59,6 +59,11 @@ sap.ui.define([
         _onPatternMatched(oEvent) {
             that.oGmodel = this.getOwnerComponent().getModel("oGModel");
             that.Email = that.oGmodel?.getProperty("/userdata/email") || "";
+            if (that.Email === "admin@gmail.com") {
+                this.getView().byId("SplitContainer").mAggregations._navMaster.addStyleClass("adminWidthClass");
+            } else {
+                this.getView().byId("SplitContainer").mAggregations._navMaster.removeStyleClass("adminWidthClass");
+            }
             this.loadAppointmentsForEmail(that.Email);
 
         },
@@ -730,7 +735,7 @@ sap.ui.define([
                     success: function (oData) {
                         sap.m.MessageToast.show(oData.value || "Deleted");
                         this.loadAppointmentsForEmail(that.Email); // reload appointments
-        
+
                         // Close and destroy popover AFTER updating appointments
                         if (that._pDetailsPopover) {
                             that._pDetailsPopover.then(function (oPopover) {
@@ -739,7 +744,7 @@ sap.ui.define([
                                 that._pDetailsPopover = null;
                             });
                         }
-        
+
                         that.selectedAppointment = null;
                     }.bind(this),
                     error: function () {
@@ -748,7 +753,7 @@ sap.ui.define([
                 });
             }
         }
-        
+
 
     });
 });
