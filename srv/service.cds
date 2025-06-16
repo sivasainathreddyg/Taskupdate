@@ -7,5 +7,7 @@ service TimesheetService {
     function checkCredentials(email : String, password : String) returns String;
     function SaveTaskData(taskData : String)                     returns String;
     function getTasksByEmail(email : String)                     returns String;
+    function UpdateTask(updatedtaskdata : String)                returns String;
+    function EditTask(editedtaskdata : String)                   returns String;
 
 }

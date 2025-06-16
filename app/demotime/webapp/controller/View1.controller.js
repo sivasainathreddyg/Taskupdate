@@ -132,20 +132,42 @@ sap.ui.define([
             }
 
             if (this.selectedAppointment) {
-                const oContext = this.selectedAppointment.getBindingContext();
-                const oModel = oContext.getModel();
-                const sPath = oContext.getPath();
+                const oContext = this.selectedAppointment.getBindingContext("calendermodel");
+                var oDraggedTask = oContext.getObject();
+                const oModel = this.getView().getModel();
 
-                oModel.setProperty(sPath + "/title", sTitle);
-                oModel.setProperty(sPath + "/taskDescription", sDesc);
-                oModel.setProperty(sPath + "/startDate", oStartDate);
-                oModel.setProperty(sPath + "/endDate", oEndDate);
+            const oTask = {
+                id: oDraggedTask.id,
+                title: sTitle,
+                description: sDesc,
+                startDate: oStartDate,
+                endDate: oEndDate,
+                email: that.Email
+            };
+            var jsonString = JSON.stringify(oTask);
 
-                this.selectedAppointment.setStartDate(new Date(oStartDate));
-                this.selectedAppointment.setEndDate(new Date(oEndDate));
+            oModel.callFunction("/EditTask", {
+                method: "GET",
+                urlParameters: { editedtaskdata: jsonString },
+                success: function (oData) {
+                    sap.m.MessageToast.show(oData.value || "Edited");
+                    this.loadAppointmentsForEmail(that.Email);
+                }.bind(this),
+                error: function () {
+                    sap.m.MessageToast.show("Error saving task to backend.");
+                }
+            });
+
+                // oModel.setProperty(sPath + "/title", sTitle);
+                // oModel.setProperty(sPath + "/taskDescription", sDesc);
+                // oModel.setProperty(sPath + "/startDate", oStartDate);
+                // oModel.setProperty(sPath + "/endDate", oEndDate);
+
+                // this.selectedAppointment.setStartDate(new Date(oStartDate));
+                // this.selectedAppointment.setEndDate(new Date(oEndDate));
             }
 
-            this.calculateDailyTotalsFromAppointments();
+            // this.calculateDailyTotalsFromAppointments();
 
             if (this._pDetailsPopover) {
                 this._pDetailsPopover.then(function (oPopover) {
@@ -159,25 +181,76 @@ sap.ui.define([
         handleAppointmentDrop: function (oEvent) {
             //internally drag and drop in the calender
             var oAppointment = oEvent.getParameter("appointment");
+            var oContext = oAppointment.getBindingContext("calendermodel");
+            var oDraggedTask = oContext.getObject();
             var oStartDate = oEvent.getParameter("startDate");
             var oEndDate = oEvent.getParameter("endDate");
+            const oModel = this.getView().getModel();
+
+            const oTask = {
+                id: oDraggedTask.id,
+                title: oDraggedTask.title,
+                description: oDraggedTask.taskDescription,
+                startDate: oStartDate,
+                endDate: oEndDate,
+                email: that.Email
+            };
+            var jsonString = JSON.stringify(oTask);
+
+            oModel.callFunction("/UpdateTask", {
+                method: "GET",
+                urlParameters: { updatedtaskdata: jsonString },
+                success: function (oData) {
+                    sap.m.MessageToast.show(oData.value || "Updated");
+                    this.loadAppointmentsForEmail(that.Email);
+                }.bind(this),
+                error: function () {
+                    sap.m.MessageToast.show("Error saving task to backend.");
+                }
+            });
+
 
             // Update the appointment object
-            oAppointment.setStartDate(oStartDate);
-            oAppointment.setEndDate(oEndDate);
-            this.calculateDailyTotalsFromAppointments();
+            // oAppointment.setStartDate(oStartDate);
+            // oAppointment.setEndDate(oEndDate);
+            // this.calculateDailyTotalsFromAppointments();
 
             //sap.m.MessageToast.show("Appointment moved to: " + oStartDate.toLocaleString());
         },
         handleAppointmentResize: function (oEvent) {
             var oAppointment = oEvent.getParameter("appointment");
+            var oContext = oAppointment.getBindingContext("calendermodel");
+            var oDraggedTask = oContext.getObject();
             var oNewStartDate = oEvent.getParameter("startDate");
             var oNewEndDate = oEvent.getParameter("endDate");
+            const oModel = this.getView().getModel();
+
+            const oTask = {
+                id: oDraggedTask.id,
+                title: oDraggedTask.title,
+                description: oDraggedTask.taskDescription,
+                startDate: oNewStartDate,
+                endDate: oNewEndDate,
+                email: that.Email
+            };
+            var jsonString = JSON.stringify(oTask);
+
+            oModel.callFunction("/UpdateTask", {
+                method: "GET",
+                urlParameters: { updatedtaskdata: jsonString },
+                success: function (oData) {
+                    sap.m.MessageToast.show(oData.value || "Updated");
+                    this.loadAppointmentsForEmail(that.Email);
+                }.bind(this),
+                error: function () {
+                    sap.m.MessageToast.show("Error saving task to backend.");
+                }
+            });
 
             // Update the appointment object with new times
-            oAppointment.setStartDate(oNewStartDate);
-            oAppointment.setEndDate(oNewEndDate);
-            this.calculateDailyTotalsFromAppointments();
+            // oAppointment.setStartDate(oNewStartDate);
+            // oAppointment.setEndDate(oNewEndDate);
+            // this.calculateDailyTotalsFromAppointments();
 
             // sap.m.MessageToast.show("Appointment resized to: " +
             // oNewStartDate.toLocaleString() + " - " + oNewEndDate.toLocaleString());
@@ -330,8 +403,9 @@ sap.ui.define([
                     //   type: "Type01"
                     // }));
                     const aAppointments = results.map(entry => ({
+                        id: entry.ID,
                         title: entry.TITLE,
-                        description: entry.DESCRIPTION,
+                        taskDescription: entry.DESCRIPTION,
                         startDate: new Date(entry.STARTDATE + "Z"),
                         endDate: new Date(entry.ENDDATE + "Z"),
                         type: "Type01"
@@ -339,7 +413,8 @@ sap.ui.define([
 
 
                     oCalendarModel.setProperty("/appointments", aAppointments);
-                },
+                    this.calculateDailyTotalsFromAppointments();
+                }.bind(this),
                 error: function (err) {
                     console.error("Error fetching tasks for email", err);
                     sap.m.MessageToast.show("Failed to load appointments.");
@@ -560,7 +635,8 @@ sap.ui.define([
         },
         calculateDailyTotalsFromAppointments: function () {
             const oModel = this.getView().getModel();
-            const aAppointments = oModel.getProperty("/appointments") || [];
+            const calModel = this.getView().getModel("calendermodel");
+            const aAppointments = calModel.getProperty("/appointments") || [];
 
             // Initialize totals map for each weekday
             const oTotals = {
