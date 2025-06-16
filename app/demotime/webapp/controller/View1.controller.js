@@ -136,27 +136,27 @@ sap.ui.define([
                 var oDraggedTask = oContext.getObject();
                 const oModel = this.getView().getModel();
 
-            const oTask = {
-                id: oDraggedTask.id,
-                title: sTitle,
-                description: sDesc,
-                startDate: oStartDate,
-                endDate: oEndDate,
-                email: that.Email
-            };
-            var jsonString = JSON.stringify(oTask);
+                const oTask = {
+                    id: oDraggedTask.id,
+                    title: sTitle,
+                    description: sDesc,
+                    startDate: oStartDate,
+                    endDate: oEndDate,
+                    email: that.Email
+                };
+                var jsonString = JSON.stringify(oTask);
 
-            oModel.callFunction("/EditTask", {
-                method: "GET",
-                urlParameters: { editedtaskdata: jsonString },
-                success: function (oData) {
-                    sap.m.MessageToast.show(oData.value || "Edited");
-                    this.loadAppointmentsForEmail(that.Email);
-                }.bind(this),
-                error: function () {
-                    sap.m.MessageToast.show("Error saving task to backend.");
-                }
-            });
+                oModel.callFunction("/EditTask", {
+                    method: "GET",
+                    urlParameters: { editedtaskdata: jsonString },
+                    success: function (oData) {
+                        sap.m.MessageToast.show(oData.value || "Edited");
+                        this.loadAppointmentsForEmail(that.Email);
+                    }.bind(this),
+                    error: function () {
+                        sap.m.MessageToast.show("Error saving task to backend.");
+                    }
+                });
 
                 // oModel.setProperty(sPath + "/title", sTitle);
                 // oModel.setProperty(sPath + "/taskDescription", sDesc);
@@ -413,7 +413,8 @@ sap.ui.define([
 
 
                     oCalendarModel.setProperty("/appointments", aAppointments);
-                    this.calculateDailyTotalsFromAppointments();
+                    // this.calculateDailyTotalsFromAppointments();
+                    this.handleStartDateChange();
                 }.bind(this),
                 error: function (err) {
                     console.error("Error fetching tasks for email", err);
@@ -633,12 +634,29 @@ sap.ui.define([
                 oPopover.openBy(oEvent.getSource());
             });
         },
-        calculateDailyTotalsFromAppointments: function () {
-            const oModel = this.getView().getModel();
+        handleStartDateChange: function (oEvent) {
+            const oCalendar = this.byId("SPC1"); // Replace with your calendar ID
+            const oStartDate = oCalendar.getStartDate(); // returns visible start date
+
+            // Compute the week start (Monday) and week end (Sunday)
+            const startOfWeek = new Date(oStartDate);
+            const day = startOfWeek.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+            const diffToMonday = (day === 0 ? -6 : 1 - day); // shift Sunday back 6 days
+            startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            // Call your totals calculation function
+            this.calculateDailyTotalsFromAppointments(startOfWeek, endOfWeek);
+        },
+        calculateDailyTotalsFromAppointments: function (startOfWeek, endOfWeek) {
             const calModel = this.getView().getModel("calendermodel");
             const aAppointments = calModel.getProperty("/appointments") || [];
 
-            // Initialize totals map for each weekday
+            // Initialize totals for each day of the week (Sunday to Saturday)
             const oTotals = {
                 0: 0, // Sunday
                 1: 0, // Monday
@@ -649,26 +667,29 @@ sap.ui.define([
                 6: 0  // Saturday
             };
 
-            // Loop over each appointment and calculate duration
             aAppointments.forEach(appointment => {
                 const oStart = new Date(appointment.startDate);
                 const oEnd = new Date(appointment.endDate);
-                const day = oStart.getDay();
 
-                const diffMs = oEnd - oStart;
-                if (diffMs > 0) {
-                    const diffHrs = diffMs / (1000 * 60 * 60); // Convert ms to hours
-                    oTotals[day] += diffHrs;
+                // Only process appointments within the selected week range
+                if (oStart >= startOfWeek && oEnd <= endOfWeek) {
+                    const day = oStart.getDay();
+                    const diffMs = oEnd - oStart;
+
+                    if (diffMs > 0) {
+                        const diffHrs = diffMs / (1000 * 60 * 60); // ms to hours
+                        oTotals[day] += diffHrs;
+                    }
                 }
             });
 
-            // Format and update each cell
             const formatHours = (val) => {
                 const hours = Math.floor(val);
                 const mins = Math.round((val - hours) * 60);
                 return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
             };
 
+            // Update UI elements with the formatted totals
             this.byId("sunHours").setText(formatHours(oTotals[0]));
             this.byId("monHours").setText(formatHours(oTotals[1]));
             this.byId("tueHours").setText(formatHours(oTotals[2]));
@@ -698,33 +719,34 @@ sap.ui.define([
         // },
         handlePopoverDeleteButton: function () {
             if (this.selectedAppointment) {
-                const oContext = this.selectedAppointment.getBindingContext();
-                const oModel = oContext.getModel();
-                const sPath = oContext.getPath();
-
-                if (sPath) {
-                    const aPathParts = sPath.split("/");
-                    const sCollectionPath = "/" + aPathParts[1];
-                    const iIndex = parseInt(aPathParts[2], 10);
-                    const aAppointments = oModel.getProperty(sCollectionPath);
-                    if (Array.isArray(aAppointments) && iIndex > -1) {
-                        aAppointments.splice(iIndex, 1);
-                        oModel.setProperty(sCollectionPath, aAppointments);
-                        // sap.m.MessageToast.show("Appointment deleted.");
+                const oContext = this.selectedAppointment.getBindingContext("calendermodel");
+                const oDraggedTask = oContext.getObject();
+                const oModel = this.getView().getModel();
+                oModel.callFunction("/DeleteTask", {
+                    method: "GET",
+                    urlParameters: { taskId: oDraggedTask.id },
+                    success: function (oData) {
+                        sap.m.MessageToast.show(oData.value || "Deleted");
+                        this.loadAppointmentsForEmail(that.Email); // reload appointments
+        
+                        // Close and destroy popover AFTER updating appointments
+                        if (that._pDetailsPopover) {
+                            that._pDetailsPopover.then(function (oPopover) {
+                                oPopover.close();
+                                oPopover.destroy();
+                                that._pDetailsPopover = null;
+                            });
+                        }
+        
+                        that.selectedAppointment = null;
+                    }.bind(this),
+                    error: function () {
+                        sap.m.MessageToast.show("Error deleting task from backend.");
                     }
-                }
-                this.selectedAppointment = null;
-            }
-            // Close and destroy the popover
-            if (this._pDetailsPopover) {
-                this._pDetailsPopover.then(function (oPopover) {
-                    oPopover.close();
-                    oPopover.destroy();
                 });
-                this._pDetailsPopover = null;
             }
-            this.calculateDailyTotalsFromAppointments();
         }
+        
 
     });
 });

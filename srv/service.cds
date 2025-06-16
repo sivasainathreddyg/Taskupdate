@@ -9,5 +9,6 @@ service TimesheetService {
     function getTasksByEmail(email : String)                     returns String;
     function UpdateTask(updatedtaskdata : String)                returns String;
     function EditTask(editedtaskdata : String)                   returns String;
+    function DeleteTask(taskId : String)                         returns String;
 
 }

@@ -99,7 +99,7 @@ module.exports = srv => {
             try {
 
                 await cds.update('MY_TIMESHEET_TIMESHEETENTRIES')
-                    .set({ TITLE:task.title,DESCRIPTION:task.description,STARTDATE: startDate, ENDDATE: endDate }).where({ ID: task.id });
+                    .set({ TITLE: task.title, DESCRIPTION: task.description, STARTDATE: startDate, ENDDATE: endDate }).where({ ID: task.id });
 
                 return 'Timesheet Edit successfully';
             } catch (error) {
@@ -115,15 +115,9 @@ module.exports = srv => {
     //     const { email } = req.data;
     //     let tasks;
 
-    //     if(email==="admin@gmail.com"){
-    //         tasks = await cds.transaction(req).run(
-    //             SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES")
-    //         );
-    //     }else{
     //          tasks = await cds.transaction(req).run(
     //             SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ email })
     //         );
-    //     }
 
     //     if (tasks) {
     //         return JSON.stringify(tasks);
@@ -133,24 +127,63 @@ module.exports = srv => {
     // });
 
     srv.on("getTasksByEmail", async (req) => {
-        try {
-            const { email } = req.data;
+        const { email } = req.data;
+        let tasks;
+
+        if (email === "admin@gmail.com") {
+            tasks = await cds.transaction(req).run(
+                SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES")
+            );
+        } else {
+            tasks = await cds.transaction(req).run(
+                SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ email })
+            );
+        }
+
+        if (tasks) {
+            return JSON.stringify(tasks);
+        } else {
+            return JSON.stringify({ error: 'Invalid credentials' });
+        }
+    });
+
+    srv.on("DeleteTask", async req => {
+        const TaskID = req.data.taskId;
     
-            const query = SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES");
+        const Task = await cds.transaction(req).run(
+            SELECT.one.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ ID: TaskID })
+        );
     
-            if (email !== "admin@gmail.com") {
-                query.where({ EMAIL: email });
-            }
-    
-            const tasks = await cds.transaction(req).run(query);
-    
-            return tasks.length ? tasks : { message: "No tasks found." };
-        } catch (err) {
-            console.error("Error fetching tasks:", err);
-            return { error: "Failed to fetch tasks." };
+        if (Task) {
+            await cds.transaction(req).run(
+                DELETE.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ ID: TaskID })
+            );
+            return "Task deleted successfully";
+        } else {
+            return req.error(404, "Task not found");
         }
     });
     
+
+    // srv.on("getTasksByEmail", async (req) => {
+    //     try {
+    //         const { email } = req.data;
+
+    //         const query = SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES");
+
+    //         if (email !== "admin@gmail.com") {
+    //             query.where({ EMAIL: email });
+    //         }
+
+    //         const tasks = await cds.transaction(req).run(query);
+
+    //         return tasks.length ? JSON.stringify(tasks) : { message: "No tasks found." };
+    //     } catch (err) {
+    //         console.error("Error fetching tasks:", err);
+    //         return { error: "Failed to fetch tasks." };
+    //     }
+    // });
+
 
 
 
