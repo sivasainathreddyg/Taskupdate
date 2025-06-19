@@ -5,7 +5,6 @@
     <Button text="newpage"></Button>
     </Page>
 </mvc:View>  -->
-
 <mvc:View
     controllerName="demotime.controller.View1"
     xmlns:mvc="sap.ui.core.mvc"
@@ -35,7 +34,6 @@
                         startDate="{calendermodel>/startDate}"
                         startHour="0"
                         endHour="24"
-                        
                         viewChange="handleViewChange"
                         appointmentSelect="handleAppointmentSelect"
                         headerDateSelect="handleHeaderDateSelect"
@@ -56,14 +54,24 @@
                                 drop="handleTaskDropOnCalendar"
                             />
                         </dragDropConfig> -->
-                        
+
                         <actions>
                             <!-- <Button
                                 id="btnCreate"
                                 text="Create"
                                 press="onAddNewTask"
                             /> -->
-                            <Text text="{calendermodel>/email}" ></Text>
+                            <ComboBox
+                                id="idComboBoxUserList"
+                                items="{path:'userslistModel>/'}"
+                                selectionChange="onUserEmailChange"
+                            >
+                                <core:Item
+                                    key="{userslistModel>EMAIL}"
+                                    text="{userslistModel>EMAIL}"
+                                />
+                            </ComboBox>
+                            <Text text="{calendermodel>/email}" />
                             <Button
                                 id="btnLegend"
                                 icon="sap-icon://legend"
@@ -142,7 +150,10 @@
 
         <!-- Right Pane: Task List -->
         <detailPages>
-            <Page title="My Tasks" id="idDetailPage">
+            <Page
+                title="My Tasks"
+                id="idDetailPage"
+            >
                 <VBox>
                     <!-- <Title
                         text="Task List"
@@ -186,5 +197,3 @@
         </detailPages>
     </SplitContainer>
 </mvc:View>
-
-

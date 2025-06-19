@@ -32,7 +32,7 @@ sap.ui.define([
         onInit: function () {
             // Set initial data
             that.oGmodel = this.getOwnerComponent().getModel("oGModel");
-            that.Email = that.oGmodel?.getProperty("/userdata/email") || "";
+            that.Email = that.oGmodel?.getProperty("/userdata/EMAIL") || "";
             this.getOwnerComponent().getRouter().getRoute("View1").attachPatternMatched(this._onPatternMatched, this);
             var oTaskModel = new sap.ui.model.json.JSONModel({
                 tasks: [
@@ -55,16 +55,20 @@ sap.ui.define([
             this.getView().setModel(oTaskModel, "taskmodel");
             this._oDraggedTask = null;
             this._bEditMode = false;
+
         },
         _onPatternMatched(oEvent) {
             that.oGmodel = this.getOwnerComponent().getModel("oGModel");
-            that.Email = that.oGmodel?.getProperty("/userdata/email") || "";
+            that.Email = that.oGmodel?.getProperty("/userdata/EMAIL") || "";
             if (that.Email === "admin@gmail.com") {
                 this.getView().byId("SplitContainer").mAggregations._navMaster.addStyleClass("adminWidthClass");
+                this.byId("idComboBoxUserList").setVisible(true);
             } else {
                 this.getView().byId("SplitContainer").mAggregations._navMaster.removeStyleClass("adminWidthClass");
+                this.byId("idComboBoxUserList").setVisible(false);
             }
             this.loadAppointmentsForEmail(that.Email);
+            this.getuserslist();
 
         },
         onTaskDragStart: function (oEvent) {
@@ -260,6 +264,34 @@ sap.ui.define([
             // sap.m.MessageToast.show("Appointment resized to: " +
             // oNewStartDate.toLocaleString() + " - " + oNewEndDate.toLocaleString());
         },
+        getuserslist: function () {
+            var oModel = this.getView().getModel();
+
+            oModel.callFunction("/GetUsersList", {
+                method: "GET",
+                success: function (oData) {
+                    if (oData && oData.GetUsersList) {
+                        var oUsersModel = new sap.ui.model.json.JSONModel(JSON.parse(oData.GetUsersList));
+                        this.getView().setModel(oUsersModel, "userslistModel");
+                    } else {
+                        sap.m.MessageToast.show("No users found.");
+                    }
+                }.bind(this),
+                error: function (err) {
+                    sap.m.MessageToast.show("Error retrieving users list.");
+                }
+            });
+        },
+        onUserEmailChange: function (oEvent) {
+            const sSelectedEmail = oEvent.getSource().getSelectedKey();
+        
+            if (sSelectedEmail) {
+                this.loadAppointmentsForEmail(sSelectedEmail);
+            } else {
+                sap.m.MessageToast.show("Please select a valid email.");
+            }
+        },        
+
         // handleTaskDropOnCalendar: function (oEvent) {
         //     //drop a task which is drag from the list to calender
         //     const oDraggedTask = oEvent.getParameter("draggedControl").getBindingContext("taskmodel").getObject();
@@ -389,7 +421,7 @@ sap.ui.define([
             // sap.m.MessageToast.show("Task dropped at: " + dropDate.toLocaleString());
         },
         loadAppointmentsForEmail: function (sEmail) {
-            const oModel = this.getView().getModel(); // OData model
+            const oModel = this.getView().getModel();
             const oCalendarModel = this.getView().getModel("calendermodel");
 
             oModel.callFunction("/getTasksByEmail", {
@@ -594,7 +626,6 @@ sap.ui.define([
             const sQuery = oEvent.getParameter("newValue");
             const oList = this.byId("TaskList");
             const oBinding = oList.getBinding("items");
-
             if (oBinding) {
                 const aFilter = [];
                 if (sQuery && sQuery.length > 0) {
@@ -602,8 +633,8 @@ sap.ui.define([
                 }
                 oBinding.filter(aFilter);
             }
-
         },
+
         // onTaskSearch: function (oEvent) {
         //     const sQuery = oEvent.getParameter("newValue");
         //     const oList = this.byId("TaskList");

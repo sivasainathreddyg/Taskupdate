@@ -5,7 +5,7 @@ module.exports = srv => {
         const { email, password } = req.data;
 
         const user = await cds.transaction(req).run(
-            SELECT.one.from('my.timesheet.Users').where({ email, password })
+            SELECT.one.from('MY_TIMESHEET_USERS').where({ email, password })
         );
 
         if (user) {
@@ -13,6 +13,12 @@ module.exports = srv => {
         } else {
             return JSON.stringify({ error: 'Invalid credentials' });
         }
+    });
+    srv.on("GetUsersList", async req => {
+        const users = await cds.transaction(req).run(
+            SELECT.from('MY_TIMESHEET_USERS')
+        );
+        return JSON.stringify(users);
     });
 
     srv.on("SaveTaskData", async (req) => {
@@ -149,11 +155,11 @@ module.exports = srv => {
 
     srv.on("DeleteTask", async req => {
         const TaskID = req.data.taskId;
-    
+
         const Task = await cds.transaction(req).run(
             SELECT.one.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ ID: TaskID })
         );
-    
+
         if (Task) {
             await cds.transaction(req).run(
                 DELETE.from("MY_TIMESHEET_TIMESHEETENTRIES").where({ ID: TaskID })
@@ -163,7 +169,7 @@ module.exports = srv => {
             return req.error(404, "Task not found");
         }
     });
-    
+
 
     // srv.on("getTasksByEmail", async (req) => {
     //     try {
