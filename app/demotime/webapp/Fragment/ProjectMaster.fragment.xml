@@ -1,0 +1,71 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <Dialog
+        id="projectDialog"
+        title="{= ${viewModel>/editMode} ? 'Update Project' : 'Create Project'}"
+        draggable="true"
+        resizable="true"
+        contentWidth="500px"
+        contentHeight="auto"
+        class="sapUiContentPadding"
+    >
+        <VBox>
+            <Label text="Project ID" />
+            <Input
+                value="{projectModel>/PROJECTID}"
+                editable="{= !${viewModel>/editMode} }"
+            />
+
+            <Label text="Project Name" />
+            <Input value="{projectModel>/PROJECTNAME}" />
+
+            <Label text="Project Description" />
+            <Input value="{projectModel>/PROJECTDESCRIPTION}" />
+
+            <Label text="Project Status" />
+            <ComboBox selectedKey="{projectModel>/PROJECTSTATUS}">
+                <items>
+                    <core:Item
+                        key="Active"
+                        text="Active"
+                    />
+                    <core:Item
+                        key="Inactive"
+                        text="Inactive"
+                    />
+                </items>
+            </ComboBox>
+
+            <Label text="Valid From" />
+            <DatePicker
+                value="{projectModel>/VALIDFROM}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+            />
+
+            <Label text="Valid To" />
+            <DatePicker
+                value="{projectModel>/VALIDTO}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+            />
+        </VBox>
+
+        <beginButton>
+            <Button
+                text="{= ${viewModel>/editMode} ? 'Update' : 'Create'}"
+                press="onSaveProject"
+                type="Emphasized"
+            />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancel"
+                press="onCancelProjectDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

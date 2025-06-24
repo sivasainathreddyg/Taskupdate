@@ -29,15 +29,20 @@ sap.ui.define([
                     password: sPassword
                 },
                 success: function (sMessage) {
-                    var userdata=JSON.parse(sMessage.checkCredentials);
-                    if(userdata.error==="Invalid credentials"){
+                    var userdata = JSON.parse(sMessage.checkCredentials);
+                    if (userdata.error === "Invalid credentials") {
                         sap.m.MessageToast.show("Invalid credentials");
-                    }else{
-                        that.oGmodel.setData({userdata});
+                    } else {
+                        that.oGmodel.setData({ userdata });
                         sap.m.MessageToast.show("Login successful!");
-                        that.component.navTo("View1");
+                        if (userdata.EMAIL === "admin@gmail.com") {
+                            that.component.navTo("Tileview")
+                        } else {
+                            that.component.navTo("View1");
+                        }
+
                     }
-                    
+
                 },
                 error: function () {
                     sap.m.MessageToast.show("An error occurred during login.");

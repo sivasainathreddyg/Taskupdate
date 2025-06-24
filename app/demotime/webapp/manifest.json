@@ -108,6 +108,20 @@
           "target": [
             "View1"
           ]
+        },
+        {
+          "name": "Tileview",
+          "pattern": "Tileview",
+          "target": [
+            "Tileview"
+          ]
+        },
+        {
+          "name": "ProjectMaster",
+          "pattern": "ProjectMaster",
+          "target": [
+            "ProjectMaster"
+          ]
         }
       ],
       "targets": {
@@ -118,6 +132,14 @@
         "View1": {
           "id": "View1",
           "name": "View1"
+        },
+        "Tileview": {
+          "id": "Tileview",
+          "name": "Tileview"
+        },
+        "ProjectMaster": {
+          "id": "ProjectMaster",
+          "name": "ProjectMaster"
         }
       }
     },

@@ -1,0 +1,103 @@
+<mvc:View
+    controllerName="demotime.controller.ProjectMaster"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="projectMasterPage"
+        title="Project Master"
+        navButtonPress="onNavBack"
+    >
+        <!-- Custom Header -->
+        <headerContent>
+            <Toolbar>
+                <Title text="Project Master" />
+                <ToolbarSpacer />
+                <Button
+                    text="Create"
+                    icon="sap-icon://add"
+                    press="onCreatePress"
+                />
+                <Button
+                    text="Update"
+                    icon="sap-icon://edit"
+                    press="onUpdatePress"
+                />
+            </Toolbar>
+        </headerContent>
+
+        <!-- Content: Project Table -->
+        <content>
+            <Table
+                id="projectTable"
+                items="{TableprojectModel>/}"
+                inset="false"
+                mode="SingleSelectLeft"
+            >
+                <columns>
+                    <Column>
+                        <Text text="Project ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Project Name" />
+                    </Column>
+                    <Column>
+                        <Text text="Description" />
+                    </Column>
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+                    <Column>
+                        <Text text="Valid From" />
+                    </Column>
+                    <Column>
+                        <Text text="Valid To" />
+                    </Column>
+                    <Column>
+                        <Text text="Created Date" />
+                    </Column>
+                    <Column>
+                        <Text text="Updated Date" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{TableprojectModel>PROJECTID}" />
+                            <Text text="{TableprojectModel>PROJECTNAME}" />
+                            <Text
+                                text="{TableprojectModel>PROJECTDESCRIPTION}"
+                            />
+                            <Text text="{TableprojectModel>PROJECTSTATUS}" />
+                            <Text
+                                text="{
+                                    path: 'TableprojectModel>VALIDFROM',
+                                    formatter: '.formatDateOnly'
+                                    }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableprojectModel>VALIDTO',
+                                formatter: '.formatDateOnly'
+                                }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableprojectModel>CREATEDDATE',
+                                formatter: '.formatDateOnly'
+                                }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableprojectModel>UPDATEDDATE',
+                                formatter: '.formatDateOnly'
+                                }"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
