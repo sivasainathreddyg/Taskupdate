@@ -56,8 +56,8 @@ module.exports = srv => {
     });
     function toHanaTimestamp(date) {
         return date.toISOString().replace('T', ' ').slice(0, 19); // "YYYY-MM-DD HH:MM:SS"
-      }
-      
+    }
+
 
     srv.on("ProjectMasterData", async (req) => {
         try {
@@ -69,8 +69,8 @@ module.exports = srv => {
                     projectname: masterdata.PROJECTNAME,
                     projectdescription: masterdata.PROJECTDESCRIPTION,
                     projectstatus: masterdata.PROJECTSTATUS,
-                    validfrom: masterdata.VALIDFROM,
-                    validto: masterdata.VALIDTO,
+                    validfrom: toHanaTimestamp(new Date(masterdata.VALIDFROM)),
+                    validto: toHanaTimestamp(new Date(masterdata.VALIDTO)),
                     createddate: toHanaTimestamp(new Date()),
                 })
             );
@@ -86,43 +86,175 @@ module.exports = srv => {
         const projects = await cds.transaction(req).run(
             SELECT.from('MY_TIMESHEET_MASTERPROJECTS')
         );
-        return JSON.stringify(projects);
+        if (projects) {
+            return JSON.stringify(projects);
+        } else {
+            return JSON.stringify();
+        }
+
     });
 
     srv.on("ProjectMasterDataUpdate", async (req) => {
         try {
             const updatedata = JSON.parse(req.data.updatedData);
             const projectid = updatedata.PROJECTID;
-    
+
             // Optional: Format date fields to valid ISO strings or HANA-compatible format
-            if (updatedata.VALIDFROM) {
-                updatedata.VALIDFROM = new Date(updatedata.VALIDFROM).toISOString().slice(0, 19).replace("T", " ");
-            }
-            if (updatedata.VALIDTO) {
-                updatedata.VALIDTO = new Date(updatedata.VALIDTO).toISOString().slice(0, 19).replace("T", " ");
-            }
-            updatedata.UPDATEDDATE = new Date().toISOString().slice(0, 19).replace("T", " ");
-    
+            // if (updatedata.VALIDFROM) {
+            //     updatedata.VALIDFROM = new Date(updatedata.VALIDFROM).toISOString().slice(0, 19).replace("T", " ");
+            // }
+            // if (updatedata.VALIDTO) {
+            //     updatedata.VALIDTO = new Date(updatedata.VALIDTO).toISOString().slice(0, 19).replace("T", " ");
+            // }
+
+
             const updatePayload = {
                 PROJECTNAME: updatedata.PROJECTNAME,
                 PROJECTDESCRIPTION: updatedata.PROJECTDESCRIPTION,
                 PROJECTSTATUS: updatedata.PROJECTSTATUS,
                 VALIDFROM: new Date(updatedata.VALIDFROM),
                 VALIDTO: new Date(updatedata.VALIDTO),
-                UPDATEDDATE: new Date()
+                UPDATEDDATE: toHanaTimestamp(new Date())
+
             };
-    
+
             await cds.update('MY_TIMESHEET_MASTERPROJECTS')
                 .set(updatePayload)
                 .where({ PROJECTID: projectid });
-    
+
             return 'MasterProject updated successfully'
         } catch (err) {
             console.error("Error updating MasterProject:", err);
             return req.error(500, "Error updating MasterProject.");
         }
     });
-    
+    srv.on("CreateEmployeeProject", async (req) => {
+        try {
+            const masterdata = JSON.parse(req.data.employeeprojectdata);
+
+            await cds.transaction(req).run(
+                INSERT.into('MY_TIMESHEET_EMPLOYEEPROJECTS').entries({
+                    projectid: masterdata.PROJECTID,
+                    employeeemail: masterdata.EMPLOYEEEMAIL,
+                    supervisor: masterdata.SUPERVISOR,
+                    validfrom: toHanaTimestamp(new Date(masterdata.VALIDFROM)),
+                    validto: toHanaTimestamp(new Date(masterdata.VALIDTO)),
+                    createddate: toHanaTimestamp(new Date()),
+                })
+            );
+
+            return "Task saved successfully!";
+        } catch (err) {
+            console.error("Error saving EmployeeProject data:", err);
+            return err.message;
+        }
+    });
+
+    srv.on("ReadEmployeeProjects", async req => {
+        const projects = await cds.transaction(req).run(
+            SELECT.from('MY_TIMESHEET_EMPLOYEEPROJECTS')
+        );
+        if (projects) {
+            return JSON.stringify(projects);
+        } else {
+            return JSON.stringify();
+        }
+
+    });
+
+    srv.on("UpdateEmployeeProject", async (req) => {
+        try {
+            const updatedata = JSON.parse(req.data.updatedData);
+            const projectid = updatedata.PROJECTID;
+            const Employeeemail= updatedata.EMPLOYEEEMAIL
+
+            // Optional: Format date fields to valid ISO strings or HANA-compatible format
+            // if (updatedata.VALIDFROM) {
+            //     updatedata.VALIDFROM = new Date(updatedata.VALIDFROM).toISOString().slice(0, 19).replace("T", " ");
+            // }
+            // if (updatedata.VALIDTO) {
+            //     updatedata.VALIDTO = new Date(updatedata.VALIDTO).toISOString().slice(0, 19).replace("T", " ");
+            // }
+
+
+            const updatePayload = {
+               
+                SUPERVISOR: updatedata.SUPERVISOR,
+                VALIDFROM: new Date(updatedata.VALIDFROM),
+                VALIDTO: new Date(updatedata.VALIDTO),
+                UPDATEDDATE: toHanaTimestamp(new Date())
+
+            };
+
+            await cds.update('MY_TIMESHEET_EMPLOYEEPROJECTS')
+                .set(updatePayload)
+                .where({ PROJECTID: projectid ,EMPLOYEEEMAIL:Employeeemail});
+
+            return 'EmployeeProject updated successfully'
+        } catch (err) {
+            console.error("Error updating EmployeeProject:", err);
+            return err.message;
+        }
+    });
+
+    srv.on("CreateProjectTask", async (req) => {
+        try {
+            const masterdata = JSON.parse(req.data.ProjectTaskdata);
+
+            await cds.transaction(req).run(
+                INSERT.into('MY_TIMESHEET_PROJECTTASK').entries({
+                    projectid: masterdata.PROJECTID,
+                    taskid: masterdata.TASKID,
+                    title: masterdata.TITLE,
+                    description:masterdata.DESCRIPTION
+                    
+                })
+            );
+
+            return "Task saved successfully!";
+        } catch (err) {
+            console.error("Error saving ProjectTask data:", err);
+            return err.message;
+        }
+    });
+
+    srv.on("ReadEmployeeProjects", async req => {
+        const projects = await cds.transaction(req).run(
+            SELECT.from('MY_TIMESHEET_PROJECTTASK')
+        );
+        if (projects) {
+            return JSON.stringify(projects);
+        } else {
+            return JSON.stringify();
+        }
+
+    });
+
+    srv.on("UpdateProjectTask ", async (req) => {
+        try {
+            const updatedata = JSON.parse(req.data.updatedTaskData);
+            const projectid = updatedata.PROJECTID;
+            const Taskid= updatedata.TASKID
+
+            const updatePayload = {
+               
+                TITLE: updatedata.TITLE,
+                DESCRIPTION: updatedata.DESCRIPTION,
+              
+            };
+
+            await cds.update('MY_TIMESHEET_PROJECTTASK')
+                .set(updatePayload)
+                .where({ PROJECTID: projectid ,TASKID:Taskid});
+
+            return 'ProjectTask updated successfully'
+        } catch (err) {
+            console.error("Error updating ProjectTask:", err);
+            return err.message;
+        }
+    });
+
+
     //drag and drop  and resize functionality for task entries
     srv.on("UpdateTask", async (req) => {
         try {

@@ -34,7 +34,7 @@ entity MasterProjects {
 entity EmployeeProjects {
   key ProjectID     : String;
   key EmployeeEmail : String;
-      Supervisor    : String;
+      Supervisor    : Boolean;
       ValidFrom     : Timestamp;
       ValidTo       : Timestamp;
       CreatedDate   : Timestamp;

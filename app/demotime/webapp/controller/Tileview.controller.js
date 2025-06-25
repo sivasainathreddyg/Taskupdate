@@ -17,5 +17,15 @@ sap.ui.define([
         onProjectMaster: function () {
             that.component.navTo("ProjectMaster");
         },
+        onHomePress: function () {
+            that.component.navTo("View");
+        },
+        onEmployeeProjects: function () {
+            that.component.navTo("EmployeeProjects")
+        },
+        onProjectTask: function () {
+            that.component.navTo("ProjectTask");
+        }
+
     });
 });

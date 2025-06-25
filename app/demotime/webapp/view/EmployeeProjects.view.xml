@@ -1,0 +1,102 @@
+<mvc:View
+    controllerName="demotime.controller.EmployeeProjects"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="idEmployeeProjects"
+        title="Employee Projects"
+        navButtonPress="onNavBack"
+        showNavButton="true"
+    >
+        <!-- Custom Header -->
+        <headerContent>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    text="Create"
+                    icon="sap-icon://add"
+                    press="onCreatePress"
+                />
+                <Button
+                    text="Update"
+                    icon="sap-icon://edit"
+                    press="onUpdatePress"
+                />
+            </Toolbar>
+        </headerContent>
+
+        <!-- Content: Project Table -->
+        <content>
+            <Table
+                id="idTableEmployeeProject"
+                items="{TableEmployeeProjectModel>/}"
+                inset="false"
+                mode="SingleSelectLeft"
+            >
+                <columns>
+                    <Column>
+                        <Text text="Project ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Email" />
+                    </Column>
+                    <Column>
+                        <Text text="Supervisor" />
+                    </Column>
+                    <Column>
+                        <Text text="Valid From" />
+                    </Column>
+                    <Column>
+                        <Text text="Valid To" />
+                    </Column>
+                    <Column>
+                        <Text text="Created Date" />
+                    </Column>
+                    <Column>
+                        <Text text="Updated Date" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{TableEmployeeProjectModel>PROJECTID}" />
+                            <Text text="{TableEmployeeProjectModel>EMPLOYEEEMAIL}" />
+                            <Text
+                                text="{
+                                    path: 'TableEmployeeProjectModel>SUPERVISOR',
+                                    formatter: '.formatSupervisor'
+                                }"
+                            />
+                            <Text
+                                text="{
+                                    path: 'TableEmployeeProjectModel>VALIDFROM',
+                                    formatter: '.formatDateOnly'
+                                    }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableEmployeeProjectModel>VALIDTO',
+                                formatter: '.formatDateOnly'
+                                }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableEmployeeProjectModel>CREATEDDATE',
+                                formatter: '.formatDateTime'
+                                }"
+                            />
+                            <Text
+                                text="{
+                                path: 'TableEmployeeProjectModel>UPDATEDDATE',
+                                formatter: '.formatDateTime'
+                                }"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

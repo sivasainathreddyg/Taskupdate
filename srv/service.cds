@@ -18,5 +18,11 @@ service TimesheetService {
     function ProjectMasterData(projectsdata : String)            returns String;
     function ProjectMasterDataread()                             returns String;
     function ProjectMasterDataUpdate(updatedData : String)       returns String;
+    function CreateEmployeeProject(employeeprojectdata : String) returns String;
+    function ReadEmployeeProjects()                              returns String;
+    function UpdateEmployeeProject(updatedData : String)         returns String;
+    function CreateProjectTask(ProjectTaskdata : String)         returns String;
+    function ReadProjectTask()                                   returns String;
+    function UpdateProjectTask(updatedTaskData : String)         returns String;
 
 }

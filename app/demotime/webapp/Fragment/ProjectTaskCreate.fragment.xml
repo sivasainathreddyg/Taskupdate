@@ -1,0 +1,69 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="idProjectTaskDialog"
+        title="{= ${viewModel>/editMode} ? 'Update Task' : 'Create Tasks'}"
+        draggable="true"
+        resizable="true"
+        contentWidth="500px"
+    >
+        <VBox class="sapUiSmallMargin">
+            <!-- Project ID ComboBox -->
+            <Label text="Project ID" />
+            <ComboBox
+                id="idProjectTaskProjectComboBox"
+                items="{projectListModel>/}"
+                editable="{= !${viewModel>/editMode} }"
+                selectedKey="{ProjectTaskModel>PROJECTID}"
+                placeholder="Select Project ID"
+            >
+                <core:Item
+                    key="{projectListModel>PROJECTID}"
+                    text="{projectListModel>PROJECTID}"
+                />
+            </ComboBox>
+
+            <!-- Task ID (Read-only) -->
+            <Label text="Task ID" />
+            <Input
+                id="idTaskID"
+                value="{ProjectTaskModel>TASKID}"
+                editable="false"
+            />
+
+            <!-- Task Title -->
+            <Label text="Title" />
+            <Input
+                id="idTaskTitle"
+                value="{ProjectTaskModel>TITLE}"
+                placeholder="Enter Task Title"
+            />
+
+            <!-- Task Description -->
+            <Label text="Description" />
+            <TextArea
+                id="idTaskDescription"
+                value="{ProjectTaskModel>DESCRIPTION}"
+                placeholder="Enter Task Description"
+                growing="true"
+                rows="3"
+            />
+        </VBox>
+
+        <beginButton>
+            <Button
+                text="{= ${viewModel>/editMode} ? 'Update' : 'Create'}"
+                type="Emphasized"
+                press="onSaveTask"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Cancel"
+                press="onCloseTaskDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

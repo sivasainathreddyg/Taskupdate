@@ -8,11 +8,12 @@
         id="projectMasterPage"
         title="Project Master"
         navButtonPress="onNavBack"
+        showNavButton="true" 
     >
         <!-- Custom Header -->
         <headerContent>
             <Toolbar>
-                <Title text="Project Master" />
+                
                 <ToolbarSpacer />
                 <Button
                     text="Create"
@@ -85,13 +86,13 @@
                             <Text
                                 text="{
                                 path: 'TableprojectModel>CREATEDDATE',
-                                formatter: '.formatDateOnly'
+                                formatter: '.formatDateTime'
                                 }"
                             />
                             <Text
                                 text="{
                                 path: 'TableprojectModel>UPDATEDDATE',
-                                formatter: '.formatDateOnly'
+                                formatter: '.formatDateTime'
                                 }"
                             />
                         </cells>

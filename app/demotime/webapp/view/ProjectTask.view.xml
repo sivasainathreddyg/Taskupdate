@@ -1,0 +1,64 @@
+<mvc:View
+    controllerName="demotime.controller.ProjectTask"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="idProjectTasks"
+        title="Project Tasks"
+        navButtonPress="onNavBack"
+        showNavButton="true"
+    >
+        <!-- Custom Header -->
+        <headerContent>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    text="Create"
+                    icon="sap-icon://add"
+                    press="onCreatePress"
+                />
+                <Button
+                    text="Update"
+                    icon="sap-icon://edit"
+                    press="onUpdatePress"
+                />
+            </Toolbar>
+        </headerContent>
+
+        <!-- Content: Project Table -->
+        <content>
+            <Table
+                id="idTableProjectTasks"
+                items="{TableProjectTasksModel>/}"
+                inset="false"
+                mode="SingleSelectLeft"
+            >
+                <columns>
+                    <Column>
+                        <Text text="Project ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Task ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Task Title" />
+                    </Column>
+                    <Column>
+                        <Text text="Task Description" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{TableProjectTasks>PROJECTID}" />
+                            <Text text="{TableProjectTasks>TITLE}" />
+                            <Text text="{TableProjectTasks>DESCRIPTION}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

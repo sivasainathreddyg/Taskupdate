@@ -122,6 +122,20 @@
           "target": [
             "ProjectMaster"
           ]
+        },
+        {
+          "name": "EmployeeProjects",
+          "pattern": "EmployeeProjects",
+          "target": [
+            "EmployeeProjects"
+          ]
+        },
+        {
+          "name": "ProjectTask",
+          "pattern": "ProjectTask",
+          "target": [
+            "ProjectTask"
+          ]
         }
       ],
       "targets": {
@@ -140,6 +154,14 @@
         "ProjectMaster": {
           "id": "ProjectMaster",
           "name": "ProjectMaster"
+        },
+        "EmployeeProjects": {
+          "id": "EmployeeProjects",
+          "name": "EmployeeProjects"
+        },
+        "ProjectTask": {
+          "id": "ProjectTask",
+          "name": "ProjectTask"
         }
       }
     },

@@ -1,0 +1,179 @@
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
+    "sap/m/MessageToast"
+], (Controller, JSONModel, Fragment, MessageToast) => {
+    "use strict";
+    var that = this;
+
+    return Controller.extend("demotime.controller.ProjectTask", {
+        onInit() {
+            that.component = this.getOwnerComponent().getRouter().initialize();
+            var oComponent = this.getOwnerComponent();
+            that.oGmodel = oComponent.getModel("oGModel");
+            this.viewModel = new JSONModel({ editMode: false });
+            this.getView().setModel(this.viewModel, "viewModel")
+            this.ProjectTaskModel = new JSONModel({});
+            this.getView().setModel(this.ProjectTaskModel, "ProjectTasksModel")
+
+        },
+        onAfterRendering() {
+            this.loadProject();
+            this.ReadProjectTask();
+        },
+        onNavBack: function () {
+            that.component.navTo("Tileview")
+        },
+        generateTaskID: function () {
+            const now = new Date();
+            const pad = (n) => (n < 10 ? "0" + n : n);
+        
+            const taskId = "TASK" +
+                pad(now.getDate()) +
+                pad(now.getMonth() + 1) +
+                now.getFullYear().toString().slice(2) + // last two digits of year
+                pad(now.getHours()) +
+                pad(now.getMinutes()) +
+                pad(now.getSeconds());
+        
+            return taskId; // e.g. TASK250624124405
+        },        
+        loadProject: function () {
+            const oModel = this.getView().getModel();
+            oModel.callFunction("/ProjectMasterDataread", {
+                method: "GET",
+                success: function (oData) {
+                    const aProjects = JSON.parse(oData.ProjectMasterDataread);
+                    const oProjectModel = new sap.ui.model.json.JSONModel(aProjects);
+                    this.getView().setModel(oProjectModel, "projectListModel");
+                }.bind(this)
+            });
+
+            // // Load user email list
+            // oModel.callFunction("/GetUsersList", {
+            //     method: "GET",
+            //     success: function (oData) {
+            //         const aUsers = JSON.parse(oData.GetUsersList);
+            //         const oUserModel = new sap.ui.model.json.JSONModel(aUsers);
+            //         this.getView().setModel(oUserModel, "userListModel");
+            //     }.bind(this)
+            // });
+        },
+        onCreatePress: function () {
+            this.viewModel.setProperty("/editMode", false);
+            const taskId = this.generateTaskID();
+            this.projectModel.setData({
+                PROJECTID: "",
+                TASKID: taskId,
+                TITLE: "",
+                DESCRIPTION: ""
+            });
+            this.openTaskDialog();
+        },
+        onUpdatePress: function (oEvent) {
+            var oSelectedItem = this.getView().byId("idTableProjectTasks").getSelectedItem();
+            if (!oSelectedItem) {
+                sap.m.MessageToast.show("please select any of the row");
+                return;
+            }
+            var oData = oSelectedItem.getBindingContext("TableProjectTasksModel").getObject();
+            this.viewModel.setProperty("/editMode", true);
+            this.ProjectTaskModel.setData(oData);
+            this.openTaskDialog();
+        },
+        openTaskDialog: function () {
+            if (!this.pCreateDialog) {
+                Fragment.load({
+                    id: this.getView().getId(),
+                    name: "demotime.Fragment.ProjectTaskCreate",
+                    controller: this
+                }).then(function (oDialog) {
+                    this.pCreateDialog = oDialog;
+                    this.getView().addDependent(oDialog);
+                    this.pCreateDialog.open();
+                }.bind(this));
+            } else {
+                this.pCreateDialog.open();
+            }
+        },
+
+        onSaveEmployeeProject: function () {
+            var oData = this.ProjectTaskModel.getData();
+            var bEditMode = this.viewModel.getProperty("/editMode");
+            const sPayload = JSON.stringify(oData);
+            var oModel = this.getView().getModel();
+            if (bEditMode) {
+                oModel.callFunction("/UpdateProjectTask", {
+                    method: "GET",
+                    urlParameters: { updatedTaskData: sPayload },
+                    success: function (data) {
+                        if (data.UpdateProjectTask === "ProjectTask updated successfully") {
+                            MessageToast.show(data.UpdateEmployeeProject);
+                            this.ReadProjectTask();
+                            this.pCreateDialog.close();
+                        } else {
+                            MessageToast.show(data.UpdateEmployeeProject);
+                        }
+
+                    }.bind(this),
+                    error: function (err) {
+                        MessageToast.show("Failed to update employee project.");
+                    }
+                });
+            } else {
+                oModel.callFunction("/CreateProjectTask", {
+                    method: "GET",
+                    urlParameters: { ProjectTaskdata: sPayload },
+                    success: function (data) {
+                        if (data.CreateProjectTask === "Task saved successfully!") {
+                            MessageToast.show("Employee project saved successfully!");
+                            this.pCreateDialog.close();
+                            this.ReadProjectTask();
+                        } else {
+                            MessageToast.show(data.CreateProjectTask);
+                        }
+
+                    }.bind(this),
+                    error: function () {
+                        MessageToast.show("Failed to create employee project.");
+                    }
+                });
+            }
+        },
+
+        ReadProjectTask: function () {
+            const oModel = this.getView().getModel();
+            oModel.callFunction("/ReadProjectTask", {
+                method: "GET",
+                success: function (oData) {
+                    const aProjects = JSON.parse(oData.ReadEmployeeProjects);
+                    if (aProjects) {
+                        const oTableModel = new sap.ui.model.json.JSONModel(aProjects);
+                        this.getView().setModel(oTableModel, "TableProjectTasksModel");
+                    } else {
+                        sap.m.MessageToastshow("No data found!")
+                    }
+
+                }.bind(this),
+                error: function (err) {
+                    sap.m.MessageToast.show("Failed to read data")
+                }
+            });
+        },
+
+        onCloseDialog: function () {
+            if (this.pCreateDialog) {
+                this.pCreateDialog.close();
+            }
+        },
+        onCancelEmployeeProject: function () {
+            if (this.pCreateDialog) {
+                this.pCreateDialog.close();
+            }
+        },
+        
+
+    });
+});
+

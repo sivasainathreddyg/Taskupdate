@@ -23,6 +23,9 @@ sap.ui.define([
 
 
         },
+        onNavBack: function () {
+            that.component.navTo("Tileview")
+        },
         onAfterRendering() {
             this.ReadMasterProjects();
         },
@@ -38,8 +41,12 @@ sap.ui.define([
             this.openProjectDialog();
         },
         onUpdatePress: function (oEvent) {
-          var oSelectedItem =this.getView().byId("projectTable").getSelectedItem();
-          var oData=oSelectedItem.getBindingContext("TableprojectModel").getObject();
+            var oSelectedItem = this.getView().byId("projectTable").getSelectedItem();
+            if(!oSelectedItem){
+                sap.m.MessageToast.show("please select any of the row");
+                return;
+            }
+            var oData = oSelectedItem.getBindingContext("TableprojectModel").getObject();
 
             // Set edit mode to true
             this.viewModel.setProperty("/editMode", true);
@@ -70,7 +77,7 @@ sap.ui.define([
             if (this.projectDialog) {
                 this.projectDialog.close();
             }
-            that.ReadMasterProjects();
+
         },
         formatDate: function (oDate) {
             if (!oDate) return null;
@@ -93,7 +100,7 @@ sap.ui.define([
                     success: function (data) {
                         MessageToast.show(data.ProjectMasterDataUpdate);
                         this.ReadMasterProjects();
-                        if (that.projectDialog) that.projectDialog.close();
+                        this.projectDialog.close();
                     }.bind(this),
                     error: function (err) {
                         MessageToast.show("Failed to update project.");
@@ -115,8 +122,6 @@ sap.ui.define([
                         MessageToast.show("Failed to create project.", err);
                     }
                 })
-
-
                 this.projectDialog.close();
             }
         },
@@ -142,11 +147,26 @@ sap.ui.define([
             if (!sDate) return "";
             try {
                 const oDate = new Date(sDate);
-                return oDate.toISOString().split("T")[0]; 
+                return oDate.toISOString().split("T")[0];
             } catch (e) {
                 return "";
             }
+        },
+        formatDateTime: function (sDate) {
+            if (!sDate) return "";
+
+            const oDate = new Date(sDate + "Z");
+
+            const year = oDate.getFullYear();
+            const month = String(oDate.getMonth() + 1).padStart(2, '0');
+            const day = String(oDate.getDate()).padStart(2, '0');
+            const hours = String(oDate.getHours()).padStart(2, '0');
+            const minutes = String(oDate.getMinutes()).padStart(2, '0');
+            const seconds = String(oDate.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
+
 
     });
 });

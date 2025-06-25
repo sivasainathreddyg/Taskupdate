@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+>
+    <Dialog
+        id="employeeProjectDialog"
+        title="{= ${viewModel>/editMode} ? 'Update Employee Project' : 'Create Employee Project'}"
+        draggable="true"
+        resizable="true"
+        contentWidth="500px"
+    >
+        <VBox class="sapUiSmallMargin">
+            <!-- Project ID ComboBox -->
+            <Label text="Project ID" />
+            <ComboBox
+                id="comboProjectId"
+                editable="{= !${viewModel>/editMode} }"
+                items="{projectListModel>/}"
+                selectedKey="{EmployeeProjectModel>/PROJECTID}"
+            >
+                <core:Item
+                    key="{projectListModel>PROJECTID}"
+                    text="{projectListModel>PROJECTID}"
+                />
+            </ComboBox>
+
+            <!-- Email ComboBox -->
+            <Label text="Employee Email" />
+            <ComboBox
+                id="comboEmail"
+                 editable="{= !${viewModel>/editMode} }"
+                items="{userListModel>/}"
+                selectedKey="{EmployeeProjectModel>/EMPLOYEEEMAIL}"
+            >
+                <core:Item
+                    key="{userListModel>EMAIL}"
+                    text="{userListModel>EMAIL}"
+                />
+            </ComboBox>
+
+            <!-- Supervisor Checkbox -->
+            <Label text="Is Supervisor?" />
+            <CheckBox
+                id="idSupervisorCheckbox"
+                selected="{EmployeeProjectModel>/SUPERVISOR}"
+                text="Yes"
+            />
+
+            <!-- Valid From -->
+            <Label text="Valid From" />
+            <DatePicker
+                id="idValidFromDP"
+                value="{EmployeeProjectModel>/VALIDFROM}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+            />
+
+            <!-- Valid To -->
+            <Label text="Valid To" />
+            <DatePicker
+                id="idValidToDP"
+                value="{EmployeeProjectModel>/VALIDTO}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+            />
+        </VBox>
+
+        <beginButton>
+            <Button
+                text="{= ${viewModel>/editMode} ? 'Update' : 'Create'}"
+                type="Emphasized"
+                press="onSaveEmployeeProject"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Cancel"
+                press="onCancelEmployeeProject"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
