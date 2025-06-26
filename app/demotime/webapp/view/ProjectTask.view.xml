@@ -52,9 +52,10 @@
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <Text text="{TableProjectTasks>PROJECTID}" />
-                            <Text text="{TableProjectTasks>TITLE}" />
-                            <Text text="{TableProjectTasks>DESCRIPTION}" />
+                            <Text text="{TableProjectTasksModel>PROJECTID}" />
+                            <Text text="{TableProjectTasksModel>TASKID}" />
+                            <Text text="{TableProjectTasksModel>TITLE}" />
+                            <Text text="{TableProjectTasksModel>DESCRIPTION}" />
                         </cells>
                     </ColumnListItem>
                 </items>

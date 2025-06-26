@@ -34,16 +34,17 @@ sap.ui.define([
             that.oGmodel = this.getOwnerComponent().getModel("oGModel");
             that.Email = that.oGmodel?.getProperty("/userdata/EMAIL") || "";
             this.getOwnerComponent().getRouter().getRoute("View1").attachPatternMatched(this._onPatternMatched, this);
-            var oTaskModel = new sap.ui.model.json.JSONModel({
-                tasks: [
-                    { taskTitle: "SAP AMS User - 1237", taskDescription: "Enhancement task", hours: "56" },
-                    { taskTitle: "Fiori App - 3456", taskDescription: "New app dev", hours: "40" },
-                    { taskTitle: "Bug Fix - 7890", taskDescription: "Critical fix", hours: "12" }
-                ],
-                // appointments: [],
-                // startDate: new Date(),
+            // var oTaskModel = new sap.ui.model.json.JSONModel({
+            //     tasks: [
+            //         { taskTitle: "SAP AMS User - 1237", taskDescription: "Enhancement task", hours: "56" },
+            //         { taskTitle: "Fiori App - 3456", taskDescription: "New app dev", hours: "40" },
+            //         { taskTitle: "Bug Fix - 7890", taskDescription: "Critical fix", hours: "12" }
+            //     ],
+            //     // appointments: [],
+            //     // startDate: new Date(),
 
-            });
+            // });
+            
             var today = new Date();
             today.setHours(0, 0, 0, 0); // midnight
             var oModel = new sap.ui.model.json.JSONModel({
@@ -52,7 +53,7 @@ sap.ui.define([
                 email: that.Email
             });
             this.getView().setModel(oModel, "calendermodel");
-            this.getView().setModel(oTaskModel, "taskmodel");
+            // this.getView().setModel(oTaskModel, "taskmodel");
             this._oDraggedTask = null;
             this._bEditMode = false;
 
@@ -69,7 +70,27 @@ sap.ui.define([
             }
             this.loadAppointmentsForEmail(that.Email);
             this.getuserslist();
+            this.ReadProjectTask();
 
+        },
+        ReadProjectTask: function () {
+            const oModel = this.getView().getModel();
+            oModel.callFunction("/ReadProjectTask", {
+                method: "GET",
+                success: function (oData) {
+                    if (oData) {
+                        const aProjects = JSON.parse(oData.ReadProjectTask);
+                        const oTaskModel = new sap.ui.model.json.JSONModel(aProjects);
+                        this.getView().setModel(oTaskModel, "taskmodel");
+                    } else {
+                        sap.m.MessageToast.show("No data found!")
+                    }
+
+                }.bind(this),
+                error: function (err) {
+                    sap.m.MessageToast.show("Failed to read data")
+                }
+            });
         },
         onTaskDragStart: function (oEvent) {
             this._oDraggedTask = oEvent.getParameter("target").getBindingContext("taskmodel").getObject();
@@ -107,11 +128,15 @@ sap.ui.define([
 
             const oTitleInput = sap.ui.core.Fragment.byId(oFragmentId, "idTitle");
             const oDescInput = sap.ui.core.Fragment.byId(oFragmentId, "idtaskDescription");
+            const oProjectid = sap.ui.core.Fragment.byId(oFragmentId, "idProjectID");
+            const oTaskid = sap.ui.core.Fragment.byId(oFragmentId, "idTaskid");
             const oStartDateTimePicker = sap.ui.core.Fragment.byId(oFragmentId, "startDateTimePicker");
             const oEndDateTimePicker = sap.ui.core.Fragment.byId(oFragmentId, "endDateTimePicker");
 
             const sTitle = oTitleInput.getValue();
             const sDesc = oDescInput.getValue();
+            const Projectid=oProjectid.getValue();
+            const Taskid=oTaskid.getValue();
 
             let oStartDate = oStartDateTimePicker.getDateValue();
             let oEndDate = oEndDateTimePicker.getDateValue();
@@ -149,6 +174,8 @@ sap.ui.define([
                     id: oDraggedTask.id,
                     title: sTitle,
                     description: sDesc,
+                    projectid:Projectid,
+                    taskid:Taskid,
                     startDate: oStartDate,
                     endDate: oEndDate,
                     email: that.Email
@@ -198,8 +225,10 @@ sap.ui.define([
 
             const oTask = {
                 id: oDraggedTask.id,
-                title: oDraggedTask.title,
-                description: oDraggedTask.taskDescription,
+                title: oDraggedTask.TITLE,
+                description: oDraggedTask.DESCRIPTION,
+                projectid:oDraggedTask.PROJECTID,
+                taskid:oDraggedTask.TASKID,
                 startDate: oStartDate,
                 endDate: oEndDate,
                 email: that.Email
@@ -236,8 +265,10 @@ sap.ui.define([
 
             const oTask = {
                 id: oDraggedTask.id,
-                title: oDraggedTask.title,
-                description: oDraggedTask.taskDescription,
+                title: oDraggedTask.TITLE,
+                description: oDraggedTask.DESCRIPTION,
+                projectid:oDraggedTask.PROJECTID,
+                taskid:oDraggedTask.TASKID,
                 startDate: oNewStartDate,
                 endDate: oNewEndDate,
                 email: that.Email
@@ -284,13 +315,13 @@ sap.ui.define([
         },
         onUserEmailChange: function (oEvent) {
             const sSelectedEmail = oEvent.getSource().getSelectedKey();
-        
+
             if (sSelectedEmail) {
                 this.loadAppointmentsForEmail(sSelectedEmail);
             } else {
                 sap.m.MessageToast.show("Please select a valid email.");
             }
-        },        
+        },
 
         // handleTaskDropOnCalendar: function (oEvent) {
         //     //drop a task which is drag from the list to calender
@@ -383,8 +414,10 @@ sap.ui.define([
 
             const oTask = {
                 id: Date.now() + "_" + Math.floor(Math.random() * 10000),
-                title: oDraggedTask.taskTitle,
-                description: oDraggedTask.taskDescription,
+                title: oDraggedTask.TITLE,
+                description: oDraggedTask.DESCRIPTION,
+                projectid:oDraggedTask.PROJECTID,
+                taskid:oDraggedTask.TASKID,
                 startDate: dropDate,
                 endDate: endDate,
                 email: that.Email
@@ -443,6 +476,8 @@ sap.ui.define([
                         id: entry.ID,
                         title: entry.TITLE,
                         taskDescription: entry.DESCRIPTION,
+                        projectid:entry.PROJECTID,
+                        taskid:entry.TASKID,
                         startDate: new Date(entry.STARTDATE + "Z"),
                         endDate: new Date(entry.ENDDATE + "Z"),
                         type: "Type01"
@@ -629,7 +664,7 @@ sap.ui.define([
             if (oBinding) {
                 const aFilter = [];
                 if (sQuery && sQuery.length > 0) {
-                    aFilter.push(new sap.ui.model.Filter("taskTitle", sap.ui.model.FilterOperator.Contains, sQuery));
+                    aFilter.push(new sap.ui.model.Filter("TITLE", sap.ui.model.FilterOperator.Contains, sQuery));
                 }
                 oBinding.filter(aFilter);
             }

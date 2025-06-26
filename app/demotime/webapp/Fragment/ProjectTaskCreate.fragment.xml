@@ -16,7 +16,7 @@
                 id="idProjectTaskProjectComboBox"
                 items="{projectListModel>/}"
                 editable="{= !${viewModel>/editMode} }"
-                selectedKey="{ProjectTaskModel>PROJECTID}"
+                selectedKey="{ProjectTaskModel>/PROJECTID}"
                 placeholder="Select Project ID"
             >
                 <core:Item
@@ -29,7 +29,7 @@
             <Label text="Task ID" />
             <Input
                 id="idTaskID"
-                value="{ProjectTaskModel>TASKID}"
+                value="{ProjectTaskModel>/TASKID}"
                 editable="false"
             />
 
@@ -37,7 +37,7 @@
             <Label text="Title" />
             <Input
                 id="idTaskTitle"
-                value="{ProjectTaskModel>TITLE}"
+                value="{ProjectTaskModel>/TITLE}"
                 placeholder="Enter Task Title"
             />
 
@@ -45,10 +45,9 @@
             <Label text="Description" />
             <TextArea
                 id="idTaskDescription"
-                value="{ProjectTaskModel>DESCRIPTION}"
+                value="{ProjectTaskModel>/DESCRIPTION}"
                 placeholder="Enter Task Description"
-                growing="true"
-                rows="3"
+              
             />
         </VBox>
 

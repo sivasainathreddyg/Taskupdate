@@ -10,6 +10,8 @@ entity TimeSheetEntries {
   key id          : UUID;
       title       : String;
       description : String;
+      projectid   : String;
+      taskid      : String;
       startDate   : Timestamp;
       endDate     : Timestamp;
       email       : String;

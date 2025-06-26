@@ -170,9 +170,9 @@
                     <List
                         id="TaskList"
                         items="{
-                        path: 'taskmodel>/tasks',
+                        path: 'taskmodel>/',
                         filters: []
-                        }"
+                    }"
                     >
                         <dragDropConfig>
                             <dnd:DragInfo
@@ -182,14 +182,21 @@
                             />
                         </dragDropConfig>
                         <ObjectListItem
-                            title="{taskmodel>taskTitle}"
-                            number="{taskmodel>hours} Hours"
+                            title="{taskmodel>TITLE}"
                             type="Active"
                             press="onTaskPress"
                         >
-                            <ObjectAttribute
-                                text="{taskmodel>taskDescription}"
-                            />
+                            <attributes>
+                                <ObjectAttribute
+                                    text="Project ID: {taskmodel>PROJECTID}"
+                                />
+                                <ObjectAttribute
+                                    text="Task ID: {taskmodel>TASKID}"
+                                />
+                                <ObjectAttribute
+                                    text="Description: {taskmodel>DESCRIPTION}"
+                                />
+                            </attributes>
                         </ObjectListItem>
                     </List>
                 </VBox>

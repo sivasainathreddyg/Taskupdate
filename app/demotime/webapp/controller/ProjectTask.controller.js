@@ -15,7 +15,7 @@ sap.ui.define([
             this.viewModel = new JSONModel({ editMode: false });
             this.getView().setModel(this.viewModel, "viewModel")
             this.ProjectTaskModel = new JSONModel({});
-            this.getView().setModel(this.ProjectTaskModel, "ProjectTasksModel")
+            this.getView().setModel(this.ProjectTaskModel, "ProjectTaskModel")
 
         },
         onAfterRendering() {
@@ -28,7 +28,7 @@ sap.ui.define([
         generateTaskID: function () {
             const now = new Date();
             const pad = (n) => (n < 10 ? "0" + n : n);
-        
+
             const taskId = "TASK" +
                 pad(now.getDate()) +
                 pad(now.getMonth() + 1) +
@@ -36,9 +36,9 @@ sap.ui.define([
                 pad(now.getHours()) +
                 pad(now.getMinutes()) +
                 pad(now.getSeconds());
-        
+
             return taskId; // e.g. TASK250624124405
-        },        
+        },
         loadProject: function () {
             const oModel = this.getView().getModel();
             oModel.callFunction("/ProjectMasterDataread", {
@@ -63,7 +63,7 @@ sap.ui.define([
         onCreatePress: function () {
             this.viewModel.setProperty("/editMode", false);
             const taskId = this.generateTaskID();
-            this.projectModel.setData({
+            this.ProjectTaskModel.setData({
                 PROJECTID: "",
                 TASKID: taskId,
                 TITLE: "",
@@ -98,7 +98,7 @@ sap.ui.define([
             }
         },
 
-        onSaveEmployeeProject: function () {
+        onSaveTask: function () {
             var oData = this.ProjectTaskModel.getData();
             var bEditMode = this.viewModel.getProperty("/editMode");
             const sPayload = JSON.stringify(oData);
@@ -109,11 +109,11 @@ sap.ui.define([
                     urlParameters: { updatedTaskData: sPayload },
                     success: function (data) {
                         if (data.UpdateProjectTask === "ProjectTask updated successfully") {
-                            MessageToast.show(data.UpdateEmployeeProject);
+                            MessageToast.show(data.UpdateProjectTask);
                             this.ReadProjectTask();
                             this.pCreateDialog.close();
                         } else {
-                            MessageToast.show(data.UpdateEmployeeProject);
+                            MessageToast.show(data.UpdateProjectTask);
                         }
 
                     }.bind(this),
@@ -147,12 +147,12 @@ sap.ui.define([
             oModel.callFunction("/ReadProjectTask", {
                 method: "GET",
                 success: function (oData) {
-                    const aProjects = JSON.parse(oData.ReadEmployeeProjects);
-                    if (aProjects) {
+                    if (oData) {
+                        const aProjects = JSON.parse(oData.ReadProjectTask);
                         const oTableModel = new sap.ui.model.json.JSONModel(aProjects);
                         this.getView().setModel(oTableModel, "TableProjectTasksModel");
                     } else {
-                        sap.m.MessageToastshow("No data found!")
+                        sap.m.MessageToast.show("No data found!")
                     }
 
                 }.bind(this),
@@ -162,17 +162,17 @@ sap.ui.define([
             });
         },
 
-        onCloseDialog: function () {
+        onCloseTaskDialog: function () {
             if (this.pCreateDialog) {
                 this.pCreateDialog.close();
             }
         },
-        onCancelEmployeeProject: function () {
-            if (this.pCreateDialog) {
-                this.pCreateDialog.close();
-            }
-        },
-        
+        // onCancelEmployeeProject: function () {
+        //     if (this.pCreateDialog) {
+        //         this.pCreateDialog.close();
+        //     }
+        // },
+
 
     });
 });

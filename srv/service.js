@@ -42,6 +42,8 @@ module.exports = srv => {
                     id: task.id,
                     title: task.title,
                     description: task.description,
+                    projectid:task.projectid,
+                    taskid:task.taskid,
                     startDate: startDate,
                     endDate: endDate,
                     email: task.email
@@ -218,7 +220,7 @@ module.exports = srv => {
         }
     });
 
-    srv.on("ReadEmployeeProjects", async req => {
+    srv.on("ReadProjectTask", async req => {
         const projects = await cds.transaction(req).run(
             SELECT.from('MY_TIMESHEET_PROJECTTASK')
         );
@@ -230,7 +232,7 @@ module.exports = srv => {
 
     });
 
-    srv.on("UpdateProjectTask ", async (req) => {
+    srv.on("UpdateProjectTask", async (req) => {
         try {
             const updatedata = JSON.parse(req.data.updatedTaskData);
             const projectid = updatedata.PROJECTID;

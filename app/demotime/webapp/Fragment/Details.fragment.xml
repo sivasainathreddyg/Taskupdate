@@ -50,6 +50,33 @@
                 id="idTitle"
                 value="{calendermodel>title}"
                 visible="{= ${view>/editMode} }"
+                editable="false"
+            />
+           <!-- ProjectID -->
+             <Text text="ProjectID:" />
+            <Text
+                text="{calendermodel>projectid}"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <Input
+                id="idProjectID"
+                value="{calendermodel>projectid}"
+                visible="{= ${view>/editMode} }"
+                editable="false"
+            />
+             <!-- TASKID -->
+             <Text text="TaskID:" />
+            <Text
+                text="{calendermodel>taskid}"
+                visible="{= !${view>/editMode} }"
+                class="sapUiSmallMarginBottom"
+            />
+            <Input
+                id="idTaskid"
+                value="{calendermodel>taskid}"
+                visible="{= ${view>/editMode} }"
+                editable="false"
             />
 
             <!-- DESCRIPTION -->
@@ -63,6 +90,7 @@
                 id="idtaskDescription"
                 value="{calendermodel>taskDescription}"
                 visible="{= ${view>/editMode} }"
+                editable="false"
             />
 
             <!-- START DATE & TIME -->
