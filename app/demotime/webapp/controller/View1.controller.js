@@ -73,6 +73,14 @@ sap.ui.define([
             this.ReadProjectTask();
 
         },
+        onNavBack: function () {
+            if (that.Email === "admin@gmail.com") {
+                that.component.navTo("Tileview")
+            } else {
+                that.component.navTo("View")
+            }
+            
+        },
         ReadProjectTask: function () {
             const oModel = this.getView().getModel();
             oModel.callFunction("/ReadProjectTask", {

@@ -43,12 +43,27 @@ entity EmployeeProjects {
       UpdatedDate   : Timestamp;
 }
 
+// entity ProjectTask {
+//   key TaskID      : String;
+//   key ProjectID   : String;
+//       Title       : String;
+//       Description : String;
+// }
+
 entity ProjectTask {
   key TaskID      : String;
   key ProjectID   : String;
       Title       : String;
       Description : String;
+      taskstatus : String(20);
+      taskowner  : String(30);
+      startdate  : Date;
+      enddate    : Date;
+      CreatedDate  : Timestamp;
+      UpdatedDate  : Timestamp;
+
 }
+
 
 entity CommonTask {
   key TaskID  : String;

@@ -42,8 +42,8 @@ module.exports = srv => {
                     id: task.id,
                     title: task.title,
                     description: task.description,
-                    projectid:task.projectid,
-                    taskid:task.taskid,
+                    projectid: task.projectid,
+                    taskid: task.taskid,
                     startDate: startDate,
                     endDate: endDate,
                     email: task.email
@@ -168,7 +168,7 @@ module.exports = srv => {
         try {
             const updatedata = JSON.parse(req.data.updatedData);
             const projectid = updatedata.PROJECTID;
-            const Employeeemail= updatedata.EMPLOYEEEMAIL
+            const Employeeemail = updatedata.EMPLOYEEEMAIL
 
             // Optional: Format date fields to valid ISO strings or HANA-compatible format
             // if (updatedata.VALIDFROM) {
@@ -180,7 +180,7 @@ module.exports = srv => {
 
 
             const updatePayload = {
-               
+
                 SUPERVISOR: updatedata.SUPERVISOR,
                 VALIDFROM: new Date(updatedata.VALIDFROM),
                 VALIDTO: new Date(updatedata.VALIDTO),
@@ -190,7 +190,7 @@ module.exports = srv => {
 
             await cds.update('MY_TIMESHEET_EMPLOYEEPROJECTS')
                 .set(updatePayload)
-                .where({ PROJECTID: projectid ,EMPLOYEEEMAIL:Employeeemail});
+                .where({ PROJECTID: projectid, EMPLOYEEEMAIL: Employeeemail });
 
             return 'EmployeeProject updated successfully'
         } catch (err) {
@@ -208,8 +208,12 @@ module.exports = srv => {
                     projectid: masterdata.PROJECTID,
                     taskid: masterdata.TASKID,
                     title: masterdata.TITLE,
-                    description:masterdata.DESCRIPTION
-                    
+                    description: masterdata.DESCRIPTION,
+                    taskstatus: masterdata.TASKSTATUS,
+                    taskowner: masterdata.TASKOWNER,
+                    startdate: masterdata.STARTDATE,
+                    enddate: masterdata.ENDDATE,
+                    createddate: toHanaTimestamp(new Date()),
                 })
             );
 
@@ -220,34 +224,47 @@ module.exports = srv => {
         }
     });
 
-    srv.on("ReadProjectTask", async req => {
+    srv.on("ReadProjectTask", async (req) => {
         const projects = await cds.transaction(req).run(
             SELECT.from('MY_TIMESHEET_PROJECTTASK')
         );
-        if (projects) {
-            return JSON.stringify(projects);
-        } else {
-            return JSON.stringify();
+
+        if (!projects || projects.length === 0) {
+            return JSON.stringify(); 
         }
 
+        // Convert buffer fields to strings
+        for (const task of projects) {
+            if (task.DESCRIPTION?.type === 'Buffer') {
+                task.DESCRIPTION = Buffer.from(task.DESCRIPTION.data).toString('utf-8');
+            }
+        }
+
+        return JSON.stringify(projects);
     });
+
 
     srv.on("UpdateProjectTask", async (req) => {
         try {
             const updatedata = JSON.parse(req.data.updatedTaskData);
             const projectid = updatedata.PROJECTID;
-            const Taskid= updatedata.TASKID
+            const Taskid = updatedata.TASKID
 
             const updatePayload = {
-               
+
                 TITLE: updatedata.TITLE,
                 DESCRIPTION: updatedata.DESCRIPTION,
-              
+                TASKSTATUS: updatedata.TASKSTATUS,
+                TASKOWNER: updatedata.TASKOWNER,
+                STARTDATE: updatedata.STARTDATE,
+                ENDDATE: updatedata.ENDDATE,
+                UPDATEDDATE: toHanaTimestamp(new Date())
+
             };
 
             await cds.update('MY_TIMESHEET_PROJECTTASK')
                 .set(updatePayload)
-                .where({ PROJECTID: projectid ,TASKID:Taskid});
+                .where({ PROJECTID: projectid, TASKID: Taskid });
 
             return 'ProjectTask updated successfully'
         } catch (err) {

@@ -21,7 +21,6 @@ sap.ui.define([
 
             this.projectDialog = null;
 
-
         },
         onNavBack: function () {
             that.component.navTo("Tileview")
@@ -42,7 +41,7 @@ sap.ui.define([
         },
         onUpdatePress: function (oEvent) {
             var oSelectedItem = this.getView().byId("projectTable").getSelectedItem();
-            if(!oSelectedItem){
+            if (!oSelectedItem) {
                 sap.m.MessageToast.show("please select any of the row");
                 return;
             }
@@ -125,7 +124,6 @@ sap.ui.define([
                 this.projectDialog.close();
             }
         },
-
         ReadMasterProjects: function () {
             var oModel = this.getView().getModel();
             oModel.callFunction("/ProjectMasterDataread", {
@@ -135,11 +133,9 @@ sap.ui.define([
                     var oTableProjectModel = new sap.ui.model.json.JSONModel(projects);
                     this.getView().setModel(oTableProjectModel, "TableprojectModel");
                     oTableProjectModel.refresh(true);
-
                 }.bind(this),
                 error: function (err) {
                     sap.m.MessageToast("Failed to read projects.")
-
                 }
             })
         },

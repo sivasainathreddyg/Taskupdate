@@ -103,6 +103,10 @@ sap.ui.define([
             var bEditMode = this.viewModel.getProperty("/editMode");
             const sPayload = JSON.stringify(oData);
             var oModel = this.getView().getModel();
+            if (!bEditMode && (!oData.PROJECTID || oData.PROJECTID.trim() === "")) {
+                MessageToast.show("Project ID is required to create a task.");
+                return;
+            }
             if (bEditMode) {
                 oModel.callFunction("/UpdateProjectTask", {
                     method: "GET",
@@ -149,6 +153,7 @@ sap.ui.define([
                 success: function (oData) {
                     if (oData) {
                         const aProjects = JSON.parse(oData.ReadProjectTask);
+
                         const oTableModel = new sap.ui.model.json.JSONModel(aProjects);
                         this.getView().setModel(oTableModel, "TableProjectTasksModel");
                     } else {
@@ -167,6 +172,20 @@ sap.ui.define([
                 this.pCreateDialog.close();
             }
         },
+        formatDateTime: function (sDate) {
+            if (!sDate) return "";
+
+            const oDate = new Date(sDate + "Z");
+
+            const year = oDate.getFullYear();
+            const month = String(oDate.getMonth() + 1).padStart(2, '0');
+            const day = String(oDate.getDate()).padStart(2, '0');
+            const hours = String(oDate.getHours()).padStart(2, '0');
+            const minutes = String(oDate.getMinutes()).padStart(2, '0');
+            const seconds = String(oDate.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
         // onCancelEmployeeProject: function () {
         //     if (this.pCreateDialog) {
         //         this.pCreateDialog.close();

@@ -29,37 +29,89 @@
 
         <!-- Content: Project Table -->
         <content>
-            <Table
-                id="idTableProjectTasks"
-                items="{TableProjectTasksModel>/}"
-                inset="false"
-                mode="SingleSelectLeft"
+            <ScrollContainer
+                horizontal="true"
+                vertical="true"
+                height="auto"
             >
-                <columns>
-                    <Column>
-                        <Text text="Project ID" />
-                    </Column>
-                    <Column>
-                        <Text text="Task ID" />
-                    </Column>
-                    <Column>
-                        <Text text="Task Title" />
-                    </Column>
-                    <Column>
-                        <Text text="Task Description" />
-                    </Column>
-                </columns>
-                <items>
-                    <ColumnListItem>
-                        <cells>
-                            <Text text="{TableProjectTasksModel>PROJECTID}" />
-                            <Text text="{TableProjectTasksModel>TASKID}" />
-                            <Text text="{TableProjectTasksModel>TITLE}" />
-                            <Text text="{TableProjectTasksModel>DESCRIPTION}" />
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table>
+                <Table
+                    id="idTableProjectTasks"
+                    items="{TableProjectTasksModel>/}"
+                    inset="false"
+                    mode="SingleSelectLeft"
+                >
+                    <columns>
+                        <Column>
+                            <Text text="Project ID" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Task ID" />
+                        </Column>
+                        <Column>
+                            <Text text="Task Title" />
+                        </Column>
+                        <Column>
+                            <Text text="Task Description" />
+                        </Column>
+                        <Column>
+                            <Text text="Task Status" />
+                        </Column>
+                        <Column>
+                            <Text text="Task Owner" />
+                        </Column>
+                        <Column>
+                            <Text text="Start Date" />
+                        </Column>
+                        <Column>
+                            <Text text="End Date" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Created Date" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Updated Date" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text
+                                    text="{TableProjectTasksModel>PROJECTID}"
+                                />
+                                <Text text="{TableProjectTasksModel>TASKID}" />
+                                <Text text="{TableProjectTasksModel>TITLE}" />
+                                <Text
+                                    text="{TableProjectTasksModel>DESCRIPTION}"
+                                    wrapping="false"
+                                    maxLines="3"
+                                    tooltip="{TableProjectTasksModel>DESCRIPTION}"
+                                />
+                                <Text
+                                    text="{TableProjectTasksModel>TASKSTATUS}"
+                                />
+                                <Text
+                                    text="{TableProjectTasksModel>TASKOWNER}"
+                                />
+                                <Text
+                                    text="{TableProjectTasksModel>STARTDATE}"
+                                />
+                                <Text text="{TableProjectTasksModel>ENDDATE}" />
+                                <Text
+                                    text="{
+                                path: 'TableProjectTasksModel>CREATEDDATE',
+                                formatter: '.formatDateTime'
+                                }"
+                                />
+                                <Text
+                                    text="{
+                            path:'TableProjectTasksModel>UPDATEDDATE',
+                            formatter:'.formatDateTime'}"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </ScrollContainer>
         </content>
     </Page>
 </mvc:View>

@@ -20,7 +20,11 @@
     >
         <!-- Left Pane: Calendar -->
         <masterPages>
-            <Page title="My Timesheet">
+            <Page
+                title="My Timesheet"
+                navButtonPress="onNavBack"
+                showNavButton="true"
+            >
                 <VBox id="calendarVBox">
                     <dragDropConfig>
                         <dnd:DropInfo
@@ -195,6 +199,13 @@
                                 />
                                 <ObjectAttribute
                                     text="Description: {taskmodel>DESCRIPTION}"
+                                    tooltip="{taskmodel>DESCRIPTION}"
+                                />
+                                <ObjectAttribute
+                                    text="TaskStatus: {taskmodel>TASKSTATUS}"
+                                />
+                                <ObjectAttribute
+                                    text="TaskOwner: {taskmodel>TASKOWNER}"
                                 />
                             </attributes>
                         </ObjectListItem>

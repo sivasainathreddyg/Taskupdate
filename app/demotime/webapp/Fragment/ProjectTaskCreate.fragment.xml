@@ -1,15 +1,17 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
 >
     <Dialog
         id="idProjectTaskDialog"
-        title="{= ${viewModel>/editMode} ? 'Update Task' : 'Create Tasks'}"
+        title="{= ${viewModel>/editMode} ? 'Update Task' : 'Create Task'}"
         draggable="true"
         resizable="true"
         contentWidth="500px"
     >
         <VBox class="sapUiSmallMargin">
+
             <!-- Project ID ComboBox -->
             <Label text="Project ID" />
             <ComboBox
@@ -17,7 +19,7 @@
                 items="{projectListModel>/}"
                 editable="{= !${viewModel>/editMode} }"
                 selectedKey="{ProjectTaskModel>/PROJECTID}"
-                placeholder="Select Project ID"
+                placeholder="Select Project"
             >
                 <core:Item
                     key="{projectListModel>PROJECTID}"
@@ -28,27 +30,65 @@
             <!-- Task ID (Read-only) -->
             <Label text="Task ID" />
             <Input
-                id="idTaskID"
                 value="{ProjectTaskModel>/TASKID}"
                 editable="false"
             />
 
-            <!-- Task Title -->
-            <Label text="Title" />
+            <!-- Task Name -->
+            <Label text="Task Name" />
             <Input
-                id="idTaskTitle"
                 value="{ProjectTaskModel>/TITLE}"
-                placeholder="Enter Task Title"
+                placeholder="Enter Task Name"
             />
 
             <!-- Task Description -->
-            <Label text="Description" />
+            <Label text="Task Description" />
             <TextArea
-                id="idTaskDescription"
                 value="{ProjectTaskModel>/DESCRIPTION}"
                 placeholder="Enter Task Description"
-              
+                width="100%"
+                growing="true"
+                growingMaxLines="4"
             />
+
+            <!-- Task Status -->
+            <Label text="Task Status" />
+            <ComboBox
+                selectedKey="{ProjectTaskModel>/TASKSTATUS}"
+                placeholder="Select Task Status"
+            >
+                <core:Item key="Not Started" text="Not Started" />
+                <core:Item key="In Progress" text="In Progress" />
+                <core:Item key="Completed" text="Completed" />
+                <core:Item key="On Hold" text="On Hold" />
+                <core:Item key="Cancelled" text="Cancelled" />
+            </ComboBox>
+
+            <!-- Task Owner -->
+            <Label text="Task Owner" />
+            <Input
+                value="{ProjectTaskModel>/TASKOWNER}"
+                placeholder="Enter Task Owner"
+            />
+
+            <!-- Start Date -->
+            <Label text="Start Date" />
+            <DatePicker
+                value="{ProjectTaskModel>/STARTDATE}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+                placeholder="Select Start Date"
+            />
+
+            <!-- End Date -->
+            <Label text="End Date" />
+            <DatePicker
+                value="{ProjectTaskModel>/ENDDATE}"
+                displayFormat="yyyy-MM-dd"
+                valueFormat="yyyy-MM-dd"
+                placeholder="Select End Date"
+            />
+
         </VBox>
 
         <beginButton>
