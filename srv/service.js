@@ -42,7 +42,7 @@ module.exports = srv => {
                     id: task.id,
                     title: task.title,
                     description: task.description,
-                    projectid: task.projectid,
+                    project_projectid:task.projectid,
                     taskid: task.taskid,
                     startDate: startDate,
                     endDate: endDate,

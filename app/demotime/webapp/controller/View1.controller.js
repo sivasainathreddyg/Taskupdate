@@ -484,7 +484,7 @@ sap.ui.define([
                         id: entry.ID,
                         title: entry.TITLE,
                         taskDescription: entry.DESCRIPTION,
-                        projectid:entry.PROJECTID,
+                        projectid:entry.PROJECT_PROJECTID,
                         taskid:entry.TASKID,
                         startDate: new Date(entry.STARTDATE + "Z"),
                         endDate: new Date(entry.ENDDATE + "Z"),

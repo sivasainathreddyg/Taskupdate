@@ -68,7 +68,7 @@
                             <Text text="{TableprojectModel>PROJECTID}" />
                             <Text text="{TableprojectModel>PROJECTNAME}" />
                             <Text
-                                text="{TableprojectModel>PROJECTDESCRIPTION}"
+                                text="{TableprojectModel>PROJECTDESCRIPTION}" tooltip="{TableprojectModel>PROJECTDESCRIPTION}" wrapping="false" maxLines="3"
                             />
                             <Text text="{TableprojectModel>PROJECTSTATUS}" />
                             <Text
