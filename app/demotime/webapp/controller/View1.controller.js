@@ -44,7 +44,7 @@ sap.ui.define([
             //     // startDate: new Date(),
 
             // });
-            
+
             var today = new Date();
             today.setHours(0, 0, 0, 0); // midnight
             var oModel = new sap.ui.model.json.JSONModel({
@@ -62,11 +62,17 @@ sap.ui.define([
             that.oGmodel = this.getOwnerComponent().getModel("oGModel");
             that.Email = that.oGmodel?.getProperty("/userdata/EMAIL") || "";
             if (that.Email === "admin@gmail.com") {
-                this.getView().byId("SplitContainer").mAggregations._navMaster.addStyleClass("adminWidthClass");
+                // this.getView().byId("SplitContainer").mAggregations._navMaster.addStyleClass("adminWidthClass");
                 this.byId("idComboBoxUserList").setVisible(true);
+                this.byId("idComboBoxUserList").setSelectedKey(that.Email);
+                this.byId("idAdminbtn").setVisible(true);
+                this.byId("idgetalldata").setVisible(true);
+
             } else {
-                this.getView().byId("SplitContainer").mAggregations._navMaster.removeStyleClass("adminWidthClass");
+                // this.getView().byId("SplitContainer").mAggregations._navMaster.removeStyleClass("adminWidthClass");
                 this.byId("idComboBoxUserList").setVisible(false);
+                this.byId("idAdminbtn").setVisible(false);
+                this.byId("idgetalldata").setVisible(false);
             }
             this.loadAppointmentsForEmail(that.Email);
             this.getuserslist();
@@ -75,12 +81,16 @@ sap.ui.define([
         },
         onNavBack: function () {
             if (that.Email === "admin@gmail.com") {
-                that.component.navTo("Tileview")
+                that.component.navTo("View")
             } else {
                 that.component.navTo("View")
             }
-            
+
         },
+        onAdminpress: function () {
+            that.component.navTo("Tileview");
+        },
+
         ReadProjectTask: function () {
             const oModel = this.getView().getModel();
             oModel.callFunction("/ReadProjectTask", {
@@ -143,8 +153,8 @@ sap.ui.define([
 
             const sTitle = oTitleInput.getValue();
             const sDesc = oDescInput.getValue();
-            const Projectid=oProjectid.getValue();
-            const Taskid=oTaskid.getValue();
+            const Projectid = oProjectid.getValue();
+            const Taskid = oTaskid.getValue();
 
             let oStartDate = oStartDateTimePicker.getDateValue();
             let oEndDate = oEndDateTimePicker.getDateValue();
@@ -172,7 +182,14 @@ sap.ui.define([
                 sap.m.MessageToast.show("End time must be after start time.");
                 return;
             }
+            var oComboBox = this.byId("idComboBoxUserList");
+            var email;
 
+            if (oComboBox.getVisible()) {
+                email = oComboBox.getSelectedKey();  
+            } else {
+                email = that.Email; 
+            }
             if (this.selectedAppointment) {
                 const oContext = this.selectedAppointment.getBindingContext("calendermodel");
                 var oDraggedTask = oContext.getObject();
@@ -182,11 +199,11 @@ sap.ui.define([
                     id: oDraggedTask.id,
                     title: sTitle,
                     description: sDesc,
-                    projectid:Projectid,
-                    taskid:Taskid,
+                    projectid: Projectid,
+                    taskid: Taskid,
                     startDate: oStartDate,
                     endDate: oEndDate,
-                    email: that.Email
+                    email: email
                 };
                 var jsonString = JSON.stringify(oTask);
 
@@ -230,16 +247,26 @@ sap.ui.define([
             var oStartDate = oEvent.getParameter("startDate");
             var oEndDate = oEvent.getParameter("endDate");
             const oModel = this.getView().getModel();
+            var oComboBox = this.byId("idComboBoxUserList");
+            var email;
+
+            if (oComboBox.getVisible()) {
+                email = oComboBox.getSelectedKey();  
+            } else {
+                email = that.Email; 
+            }
+            
+             
 
             const oTask = {
                 id: oDraggedTask.id,
                 title: oDraggedTask.TITLE,
                 description: oDraggedTask.DESCRIPTION,
-                projectid:oDraggedTask.PROJECTID,
-                taskid:oDraggedTask.TASKID,
+                projectid: oDraggedTask.PROJECTID,
+                taskid: oDraggedTask.TASKID,
                 startDate: oStartDate,
                 endDate: oEndDate,
-                email: that.Email
+                email: email
             };
             var jsonString = JSON.stringify(oTask);
 
@@ -248,7 +275,7 @@ sap.ui.define([
                 urlParameters: { updatedtaskdata: jsonString },
                 success: function (oData) {
                     sap.m.MessageToast.show(oData.value || "Updated");
-                    this.loadAppointmentsForEmail(that.Email);
+                    this.loadAppointmentsForEmail(email);
                 }.bind(this),
                 error: function () {
                     sap.m.MessageToast.show("Error saving task to backend.");
@@ -270,16 +297,24 @@ sap.ui.define([
             var oNewStartDate = oEvent.getParameter("startDate");
             var oNewEndDate = oEvent.getParameter("endDate");
             const oModel = this.getView().getModel();
+            var oComboBox = this.byId("idComboBoxUserList");
+            var email;
+
+            if (oComboBox.getVisible()) {
+                email = oComboBox.getSelectedKey();  
+            } else {
+                email = that.Email; 
+            }
 
             const oTask = {
                 id: oDraggedTask.id,
                 title: oDraggedTask.TITLE,
                 description: oDraggedTask.DESCRIPTION,
-                projectid:oDraggedTask.PROJECTID,
-                taskid:oDraggedTask.TASKID,
+                projectid: oDraggedTask.PROJECTID,
+                taskid: oDraggedTask.TASKID,
                 startDate: oNewStartDate,
                 endDate: oNewEndDate,
-                email: that.Email
+                email: email
             };
             var jsonString = JSON.stringify(oTask);
 
@@ -288,7 +323,7 @@ sap.ui.define([
                 urlParameters: { updatedtaskdata: jsonString },
                 success: function (oData) {
                     sap.m.MessageToast.show(oData.value || "Updated");
-                    this.loadAppointmentsForEmail(that.Email);
+                    this.loadAppointmentsForEmail(email);
                 }.bind(this),
                 error: function () {
                     sap.m.MessageToast.show("Error saving task to backend.");
@@ -419,16 +454,24 @@ sap.ui.define([
             endDate.setHours(endDate.getHours() + 1);
 
             const oModel = this.getView().getModel();
+            var oComboBox = this.byId("idComboBoxUserList");
+            var email;
+
+            if (oComboBox.getVisible()) {
+                email = oComboBox.getSelectedKey();  
+            } else {
+                email = that.Email; 
+            }
 
             const oTask = {
                 id: Date.now() + "_" + Math.floor(Math.random() * 10000),
                 title: oDraggedTask.TITLE,
                 description: oDraggedTask.DESCRIPTION,
-                projectid:oDraggedTask.PROJECTID,
-                taskid:oDraggedTask.TASKID,
+                projectid: oDraggedTask.PROJECTID,
+                taskid: oDraggedTask.TASKID,
                 startDate: dropDate,
                 endDate: endDate,
-                email: that.Email
+                email: email
             };
             var jsonString = JSON.stringify(oTask);
 
@@ -437,7 +480,7 @@ sap.ui.define([
                 urlParameters: { taskData: jsonString },
                 success: function (oData) {
                     sap.m.MessageToast.show(oData.value || "Saved!");
-                    this.loadAppointmentsForEmail(that.Email);
+                    this.loadAppointmentsForEmail(email);
                 }.bind(this),
                 error: function () {
                     sap.m.MessageToast.show("Error saving task to backend.");
@@ -460,6 +503,13 @@ sap.ui.define([
             // oModel.setProperty("/appointments", aAppointments);
             // this.calculateDailyTotalsFromAppointments();
             // sap.m.MessageToast.show("Task dropped at: " + dropDate.toLocaleString());
+        },
+        onallemployeedata: function (oEvent) {
+            var flag = "allemployees"
+            var email = that.Email + "_" + flag
+            this.loadAppointmentsForEmail(email);
+            this.byId("idComboBoxUserList").setSelectedKey("")
+
         },
         loadAppointmentsForEmail: function (sEmail) {
             const oModel = this.getView().getModel();
@@ -484,8 +534,8 @@ sap.ui.define([
                         id: entry.ID,
                         title: entry.TITLE,
                         taskDescription: entry.DESCRIPTION,
-                        projectid:entry.PROJECT_PROJECTID,
-                        taskid:entry.TASKID,
+                        projectid: entry.PROJECT_PROJECTID,
+                        taskid: entry.TASKID,
                         startDate: new Date(entry.STARTDATE + "Z"),
                         endDate: new Date(entry.ENDDATE + "Z"),
                         type: "Type01"

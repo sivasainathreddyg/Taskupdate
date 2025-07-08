@@ -76,11 +76,23 @@
                                 />
                             </ComboBox>
                             <Text text="{calendermodel>/email}" />
-                            <Button
+                            <!-- <Button
                                 id="btnLegend"
                                 icon="sap-icon://legend"
                                 press="onOpenLegend"
                                 tooltip="Legend"
+                            /> -->
+                            <Button
+                                id="idgetalldata"
+                                text="AllEmployeeData"
+                                press="onallemployeedata"
+                                type="Emphasized"
+                            />
+                             <Button
+                                id="idAdminbtn"
+                                text="Admin"
+                                press="onAdminpress"
+                                type="Emphasized"
                             />
                         </actions>
 

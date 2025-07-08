@@ -42,7 +42,7 @@ module.exports = srv => {
                     id: task.id,
                     title: task.title,
                     description: task.description,
-                    project_projectid:task.projectid,
+                    project_projectid: task.projectid,
                     taskid: task.taskid,
                     startDate: startDate,
                     endDate: endDate,
@@ -230,7 +230,7 @@ module.exports = srv => {
         );
 
         if (!projects || projects.length === 0) {
-            return JSON.stringify(); 
+            return JSON.stringify();
         }
 
         // Convert buffer fields to strings
@@ -353,10 +353,15 @@ module.exports = srv => {
     // });
 
     srv.on("getTasksByEmail", async (req) => {
-        const { email } = req.data;
+        const rawEmail = req.data.email || "";
+
+        const hasFlag = rawEmail.includes("_");
+        const email = hasFlag ? rawEmail.split("_")[0] : rawEmail;
+        const flag = hasFlag ? rawEmail.split("_")[1] : null;
+        // const { email } = req.data;
         let tasks;
 
-        if (email === "admin@gmail.com") {
+        if (email === "admin@gmail.com" && flag === "allemployees") {
             tasks = await cds.transaction(req).run(
                 SELECT.from("MY_TIMESHEET_TIMESHEETENTRIES")
             );

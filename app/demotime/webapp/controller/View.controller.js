@@ -36,7 +36,7 @@ sap.ui.define([
                         that.oGmodel.setData({ userdata });
                         sap.m.MessageToast.show("Login successful!");
                         if (userdata.EMAIL === "admin@gmail.com") {
-                            that.component.navTo("Tileview")
+                            that.component.navTo("View1")
                         } else {
                             that.component.navTo("View1");
                         }
